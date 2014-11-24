@@ -1,0 +1,31 @@
+
+require 'resolv'
+
+
+config_files = [
+  '../spice-conf/consumer_config.rb',
+  '../spice-conf/ip_resolver.rb',
+  '../spice-conf/object_config.rb',
+  '../spice-conf/instances_config.rb',
+  '../spice-conf/images_config.rb',
+  '../spice-conf/config_steps.rb',
+  '../spice-conf/provider_config.rb',
+]
+
+working_directory = Dir.getwd
+
+config_files.each {|file| 
+  file_path = "#{working_directory}/#{file}" 
+  contents = File.read(file_path)
+  var_name = file.split('/')[-1].split('.')[0]
+  eval("$#{var_name} = #{contents}")
+}
+
+boxes = eval(File.read('./boxes.rb'))
+
+$provider = File.basename(Dir.getwd)
+eval($provider_config[$provider][:requires])
+ENV['VAGRANT_DEFAULT_PROVIDER'] = $provider
+
+eval(File.read('../spice-conf/Vagrantfile-template.rb'))
+
