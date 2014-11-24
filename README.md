@@ -190,6 +190,10 @@ VagrantSpice requires that providers are generally working with a normal Vagrant
 	vi spice-conf/consumer_config.rb  
 	cp cert provider/cert
 
+Networking
+----------
+Different providers deal with networking in different ways.  Most providers have default firewall settings in place to protect intra-vm communication.  In order to get a default multi-machine setup working, you likely need to enable firewall setings to allow communication inbound to the VM.  This is something that should be tested with the native Vagrant provider before using VagrantSpice.  The suggestion is to at a minimum open SSH (tcp 22), and Puppet (tcp 8140) inbound to the VMs.  The outbound should also be considered, and likely wide open.
+
 
 Machine Customization
 -------------
