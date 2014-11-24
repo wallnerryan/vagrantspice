@@ -202,15 +202,7 @@ The boxes.rb file specifies the names of the machines and the types.  These type
 	    :type      =>  'puppetmaster',
 	  },
 	  { 
-	    :hostname  =>  'mdm1',
-	    :type      =>  'puppetagent',
-	  },
-	  { 
-	    :hostname  =>  'tb',
-	    :type      =>  'puppetagent',
-	  },
-	  { 
-	    :hostname  =>  'mdm2',
+	    :hostname  =>  'puppetagent1',
 	    :type      =>  'puppetagent',
 	  },
 	]
@@ -331,6 +323,33 @@ The :deploy\_box\_config key contains a value that resembles the default configu
 	      end
 	    ",
 
+Puppet specific Site.pp hook
+----------------------------
+The provider_config.rb specifies the provider configurations per instance type.  As an example, the Puppet Master includes a file (site.pp) that controls which nodes receive which configurations.   There is a hook that allows this to be downloaded from a specific URL.
+
+	:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
+
+
+Other defaults
+--------------
+The consumer_config.rb file contains other defaults and plugin configurations.
+
+Notie the default domain name configuration and HostManager enablement settings.  The :plugin_config_vm is a per machine setting which is being used to ensure the proper alias is tagged per machine.
+
+	  :defaults => {
+	    :domain => 'scaleio.local',
+	    :plugin_config => "
+	      config.hostmanager.enabled = true
+	      config.hostmanager.manage_host = false
+	      config.hostmanager.ignore_private_ip = true
+	      config.hostmanager.include_offline = false
+	    ",
+	    :plugin_config_vm => "
+	      deploy_config.hostmanager.aliases = box[:hostname] 
+	    ",
+	  }
+	  
+
 Abstracted Vagrantfile
 ----------------------
 For those interested, here is what is left of a Vagrantfile in a provider directory.  Its primary purpose is just to include and run the template Vagrantfile and configuration files.
@@ -365,32 +384,7 @@ For those interested, here is what is left of a Vagrantfile in a provider direct
 
 	eval(File.read('../spice-conf/Vagrantfile-template.rb'))
 
-Puppet specific Site.pp hook
-----------------------------
-The provider_config.rb specifies the provider configurations per instance type.  As an example, the Puppet Master includes a file (site.pp) that controls which nodes receive which configurations.   There is a hook that allows this to be downloaded from a specific URL.
 
-	:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
-
-
-Other defaults
---------------
-The consumer_config.rb file contains other defaults and plugin configurations.
-
-Notie the default domain name configuration and HostManager enablement settings.  The :plugin_config_vm is a per machine setting which is being used to ensure the proper alias is tagged per machine.
-
-	  :defaults => {
-	    :domain => 'scaleio.local',
-	    :plugin_config => "
-	      config.hostmanager.enabled = true
-	      config.hostmanager.manage_host = false
-	      config.hostmanager.ignore_private_ip = true
-	      config.hostmanager.include_offline = false
-	    ",
-	    :plugin_config_vm => "
-	      deploy_config.hostmanager.aliases = box[:hostname] 
-	    ",
-	  }
-	  
 
 
 Limitations
