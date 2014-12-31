@@ -389,6 +389,12 @@ For those interested, here is what is left of a Vagrantfile in a provider direct
 	eval(File.read('../spice-conf/Vagrantfile-template.rb'))
 
 
+Image Names from Providers
+--------------------------
+
+Digital Ocean
+
+	curl -X GET -H 'Content-Type: application/json' -H 'Authorization: Bearer yourtoken' "https://api.digitalocean.com/v2/images?page=1&per_page=999" | python -m json.tool 
 
 
 Limitations

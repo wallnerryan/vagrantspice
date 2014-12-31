@@ -21,7 +21,7 @@ config_files.each {|file|
   eval("$#{var_name} = #{contents}")
 }
 
-boxes = eval(File.read('./boxes.rb'))
+boxes_config = eval(File.read('./boxes_config.rb'))
 
 $provider = File.basename(Dir.getwd)
 eval($provider_config[$provider][:requires])

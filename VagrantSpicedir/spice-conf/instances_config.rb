@@ -4,5 +4,8 @@
   },
   'puppetagent' => {
     :firewall_settings => ''
+  },
+  'coreos' => {
+    :firewall_settings => ''
   }
 }

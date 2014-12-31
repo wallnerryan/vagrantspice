@@ -53,15 +53,13 @@
   'virtualbox' => {},
 
   :defaults => {
-    :domain => 'scaleio.local',
-    :plugin_config => "
-      config.hostmanager.enabled = true
-      config.hostmanager.manage_host = false
-      config.hostmanager.ignore_private_ip = true
-      config.hostmanager.include_offline = false
-    ",
-    :plugin_config_vm => "
-      deploy_config.hostmanager.aliases = box[:hostname] 
-    ",
+    :domain => "vagrantspice.local",
+    :instances_config => {
+      'coreos' => {
+        :config_param => '{
+          :etcd_url => "https://discovery.etcd.io/5a06f86a07db91ca220545745f890a98",
+        }',
+      }
+    },
   }
 }

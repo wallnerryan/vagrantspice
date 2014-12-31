@@ -4,6 +4,7 @@
     :requires => "
       require 'vagrant-google'
       require 'vagrant-hostmanager'
+      require 'fog/version'
     ",
     :use_bucket => true,
     :sync_folder => "
@@ -51,6 +52,39 @@
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
         }        
       },
+      'coreos' => {
+        :common_instance_type => 'small',
+        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param| " 
+public_ipv4=`curl -s ip.alt.io`
+
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 500
+    peer-heartbeat-interval: 100
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+EOF
+        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+"
+        } }        
+      },
     },
     :deploy_box_config => "
       deploy_config.vm.provider :google do |google, override|
@@ -59,23 +93,27 @@
         google.google_key_location = $consumer_config[$provider][:google_key_location]
         google.image = instance_image
         eval(str_instance_type)
-        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box[:type]][:disk_size] 
+        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
         google.disk_size = disk_size unless !disk_size
 
 
         eval(str_location)
         google.name = box[:hostname]
-        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
       end
     ",
     :images_config => {
       'centos-6-v20141021' => {
         :ssh_username => 'clintonkitson'
+      },
+      'coreos-stable-444-5-0-v20141016' => {
+        :ssh_username => 'core'
       }
     },
     :images_lookup => {
       'CentOS-6.5-x64' => 'centos-6-v20141021',
+      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
     },
     :instance_type_lookup => {
       'small' => {
@@ -140,6 +178,40 @@
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) },
         }        
       },
+      'coreos' => {
+        :common_instance_type => 'small',
+        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param| " 
+public_ipv4=`curl -s ip.alt.io`
+
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 500
+    peer-heartbeat-interval: 100
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=us_west,provider=rackspace,platform=cloud,instance_type=small
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+
+EOF
+        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+"
+        } }        
+      },
     },
     :deploy_box_config => "
       deploy_config.vm.provider :rackspace do |rs,override|
@@ -150,18 +222,22 @@
         rs.image    = instance_image
         eval(str_location)
 
-        rs.key_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box[:type]][:keypair_name] || $consumer_config[$provider][:keypair_name]
-        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+        rs.key_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
+        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
       end
     ",
     :images_config => {
       'CentOS 6.5 (PVHVM)' => {
         :ssh_username => 'root'
+      },
+      'CoreOS (Stable)' => {
+        :ssh_username => 'core'
       }
     },
     :images_lookup => {
       'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+      'CoreOS-444.5.0-(stable)' => 'CoreOS (Stable)',
     },
     :instance_type_lookup => {
       'small' => {
@@ -207,12 +283,12 @@
         azure.vm_user = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
 
         azure.vm_name = box[:hostname]
-        azure.vm_location = box[:vm_location] || $provider_config[$provider][:instances_config][box[:type]][:vm_location] || $provider_config[$provider][:defaults][:vm_location]
-        azure.ssh_private_key_file = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
-        azure.ssh_certificate_file = box[:public_cert] || $provider_config[$provider][:instances_config][box[:type]][:public_cert] || $consumer_config[$provider][:private_key]
-        azure.ssh_port = box[:ssh_port] || $provider_config[$provider][:instances_config][box[:type]][:ssh_port]
-        azure.tcp_endpoints = box[:firewall_settings] || $provider_config[$provider][:instances_config][box[:type]][:firewall_settings] || $instances_config[box[:type]][:firewall_settings]
-        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+        azure.vm_location = box[:vm_location] || $provider_config[$provider][:instances_config][box_type][:vm_location] || $provider_config[$provider][:defaults][:vm_location]
+        azure.ssh_private_key_file = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
+        azure.ssh_certificate_file = box[:public_cert] || $provider_config[$provider][:instances_config][box_type][:public_cert] || $consumer_config[$provider][:private_key]
+        azure.ssh_port = box[:ssh_port] || $provider_config[$provider][:instances_config][box_type][:ssh_port]
+        azure.tcp_endpoints = box[:firewall_settings] || $provider_config[$provider][:instances_config][box_type][:firewall_settings] || $instances_config[box_type][:firewall_settings]
+        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
       end
       config.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
     ",
@@ -223,18 +299,11 @@
         :common_image_name => 'CentOS-6.5-x64',
         :config_steps_type => 'default_linux',
         :ssh_port => 22,
-        #:object_source => 'azure_files',
-        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
-        #:object_creds => {
-        #  :storage_account  => $consumer_config['azure_files'][:storage_account],
-        #  :storage_access_key => $consumer_config['azure_files'][:storage_access_key],
-        #},
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
           :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
         }
       },
       'puppetagent' => {
@@ -249,15 +318,53 @@
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
         }        
       },
+      'coreos' => {
+        :common_instance_type => 'small',
+        :common_image_name => 'CoreOS-509.1.0-(alpha)',
+        :config_steps_type => 'default_coreos',
+        :firewall_settings => '4001:4001,7001:7001',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param| " 
+public_ipv4=`curl -s ip.alt.io`
+
+echo \"#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 500
+    peer-heartbeat-interval: 100
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=us_west,provider=azure,platform=cloud,instance_type=small
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+\" > /usr/share/oem/cloud-config.yml
+        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+"
+        } }        
+      },
     },
     :images_config => {
       '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926' => {
         :ssh_username => 'centos',
         :box => 'azure'
+      },
+      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0' => {
+        :ssh_username => 'core',
+        :box => 'azure'
       }
     },
     :images_lookup => {
       'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+      'CoreOS-509.1.0-(alpha)' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0',
     },
     :instance_type_lookup => {
       'small' => {
@@ -297,20 +404,11 @@
         :common_instance_type => 'small',
         :common_image_name => 'CentOS-6.5-x64',
         :config_steps_type => 'default_linux',
-        #:object_source => 'aws_s3',
-        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
-        #:object_creds => {
-        #  :access_key_id => $consumer_config['aws_s3'][:access_key_id],
-        #  :secret_access_key => $consumer_config['aws_s3'][:secret_access_key],
-        #  :s3_host_bucket => $consumer_config['aws_s3'][:s3_host_bucket],
-        #  :s3_host_base => $consumer_config['aws_s3'][:s3_host_base],
-        #},
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
           :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
         }
       },
       'puppetagent' => {
@@ -324,6 +422,38 @@
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
         }        
       },
+      'coreos' => {
+        :common_instance_type => 'small',
+        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param| " 
+public_ipv4=`echo $SSH_CONNECTION | awk '{print $3}'`
+
+echo \"#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 500
+    peer-heartbeat-interval: 100
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=us_west,provider=digital_ocean,platform=cloud,instance_type=small
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+\" > /usr/share/oem/cloud-config.yml
+        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+"
+        } }        
+      },
     },
     :deploy_box_config => "
       deploy_config.vm.provider :digital_ocean do |digitalocean, override|
@@ -332,17 +462,26 @@
         eval(str_location)
         eval(str_instance_type)
         eval(str_optional)
-        digitalocean.ssh_key_name = box[:ssh_key_name] || $provider_config[$provider][:instances_config][box[:type]][:ssh_key_name] || $consumer_config[$provider][:ssh_key_name]        
-        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+        digitalocean.ssh_key_name = box[:ssh_key_name] || $provider_config[$provider][:instances_config][box_type][:ssh_key_name] || $consumer_config[$provider][:ssh_key_name]        
+        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         #override.vm.box = 'digital_ocean'
         #{}override.vm.box_url = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
+        digitalocean.setup = false
+        override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
       end
+      
     ",
     :images_config => {
-      '6.5 x64' => {}
+      '6.5 x64' => {
+        :ssh_username => 'root'
+      },
+      '494.5.0 (stable)' => {
+        :ssh_username => 'core'
+      },
     },
     :images_lookup => {
       'CentOS-6.5-x64' => '6.5 x64',
+      'CoreOS-444.5.0-(stable)' => '494.5.0 (stable)',
     },
     :instance_type_lookup => {
       'small' => {
@@ -382,33 +521,55 @@
         :common_instance_type => 'small',
         :common_image_name => 'CentOS-6.5-x64',
         :config_steps_type => 'default_linux',
-        #:object_source => 'aws_s3',
-        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
-        #:object_creds => {
-        #  :access_key_id => $consumer_config['aws_s3'][:access_key_id],
-        #  :secret_access_key => $consumer_config['aws_s3'][:secret_access_key],
-        #  :s3_host_bucket => $consumer_config['aws_s3'][:s3_host_bucket],
-        #  :s3_host_base => $consumer_config['aws_s3'][:s3_host_base],
-        #},
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
           :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup_dev','/etc/puppet/manifests/site.pp'),
         }
       },
       'puppetagent' => {
         :common_instance_type => 'medium',
         :common_image_name => 'CentOS-6.5-x64',
         :config_steps_type => 'default_linux',
-        #:block_device_mapping => [{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }],
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
           :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
         }        
+      },
+      'coreos' => {
+        :common_instance_type => 'small',
+        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param| " 
+public_ipv4=`curl -s ip.alt.io`
+
+echo \"#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 500
+    peer-heartbeat-interval: 100
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=us_west,provider=aws,platform=cloud,instance_type=small
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+\" > /usr/share/oem/cloud-config.yml
+        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+"
+        } }        
       },
     },
     :deploy_box_config => "
@@ -418,24 +579,28 @@
         aws.ami = instance_image
         eval(str_instance_type)
         aws.tags['Name'] = box[:hostname]
-        aws.security_groups = box[:security_groups] || $provider_config[$provider][:instances_config][box[:type]][:security_groups] || $provider_config[$provider][:defaults][:security_groups] || []
+        aws.security_groups = box[:security_groups] || $provider_config[$provider][:instances_config][box_type][:security_groups] || $provider_config[$provider][:defaults][:security_groups] || []
         
         eval(str_location)
 
-        aws.block_device_mapping = box[:block_device_mapping] || $provider_config[$provider][:instances_config][box[:type]][:block_device_mapping] || []
+        aws.block_device_mapping = box[:block_device_mapping] || $provider_config[$provider][:instances_config][box_type][:block_device_mapping] || []
 
-        aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box[:type]][:keypair_name] || $consumer_config[$provider][:keypair_name]
-        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+        aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
+        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
       end
     ",
     :images_config => {
       'ami-454b5e00' => {
         :ssh_username => 'ec2-user'
-      }
+      },
+      'ami-856772c0' => {
+        :ssh_username => 'core'
+      },
     },
     :images_lookup => {
       'CentOS-6.5-x64' => 'ami-454b5e00',
+      'CoreOS-444.5.0-(stable)' => 'ami-856772c0',
     },
     :instance_type_lookup => {
       'small' => {
@@ -529,13 +694,39 @@
       config.nfs.functional = false
     ',
     :config_param => '{
-      :type => box[:type],
+      :type => box_type,
       :hostname => box[:hostname],
       :common_image_name => common_image_name,
       :domain => domain,
       :object_creds => object_creds,
       #:repo_url => repo_url,
-      #:curl_file => $provider_config[$provider][:instances_config][box[:type]][:commands][:sitepp_curl],
+      #:curl_file => $provider_config[$provider][:instances_config][box_type][:commands][:sitepp_curl],
     }',
+    :instances_config => {
+      'puppetmaster' => {
+        :domain => 'scaleio.local',
+        :plugin_config => "
+          config.hostmanager.enabled = true
+          config.hostmanager.manage_host = false
+          config.hostmanager.ignore_private_ip = true
+          config.hostmanager.include_offline = false
+        ",
+        :plugin_config_vm => "
+          deploy_config.hostmanager.aliases = box[:hostname] 
+        ",
+      },
+      'puppetagent' => {
+        :domain => 'scaleio.local',
+        :plugin_config => "
+          config.hostmanager.enabled = true
+          config.hostmanager.manage_host = false
+          config.hostmanager.ignore_private_ip = true
+          config.hostmanager.include_offline = false
+        ",
+        :plugin_config_vm => "
+          deploy_config.hostmanager.aliases = box[:hostname] 
+        ",
+      }
+    }
   },
 }
