@@ -1,27 +1,27 @@
 VagrantSpice
 ============
-The purpose of VagrantSpice is to simplify and standardize how the different machine providers are configured and that machines can always communicate using hostnames across Vagrant providers.
+The purpose of VagrantSpice is to simplify and standardize how the different machine providers are configured across Vagrant cloud providers.
 
-The first example is relevant to getting a Puppet Master and Agent deployed and configured across multiple providers with a CentOS image.
+The primary example in the current version is getting a CoreOS Fleet cluster up and running across Amazon AWS, Azure, Digital Ocean, Google, and Rackspace.
 
+If you take a peak at the VagrantspiceDir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
 
 Summary
 -------
 
-Each provider maintains its own configuration parameters.  Some of these parameters are unique per provider but others are more generally applicable.  In addition, different providers have different default behavior for VM templates, network connectivity, storage and other configurable items.  By abstracting from the Vagrantfile, VagrantSpice allows a single configuration of boxes to work across any pre-configured provider.
+Each provider maintains its own configuration parameters.  Some of these parameters are unique per provider but others are more generally applicable.  In addition, different providers have different default behavior for VM templates, network connectivity, storage and other configurable items.  By abstracting above the Vagrantfile, VagrantSpice allows a single configuration of boxes to work across any pre-configured provider.  It can be as easy as specifying a hostname and everything else just works regardless of which cloud.
 
 This simplification requires a level of abstraction for commonality to occur.  This can limit the capabilities of certain cloud providers to only common aspects among other providers.  This is a natural by-product of making cloud provider capabilities align, but there is still the option to leverage custom provider options as well.
 
-By default VagrantSpice makes use of the Vagrant HostManager plugin to assist with configuring the hosts files with all machines as they are built.  This ensures that all machines can communicate using host names when dynamic networking (DHCP) is used (default).
-
-Different public cloud providers leverage different networking capabilities.  Some assign public IPs directly to interfaces of the machine, while others leverage NAT and private IP spaces.  In addition, some provide intra-VM communication between machines while others only allow communication through public IP addresses.  For this VagrantSpice also uses the HostManager plugin and different IP resolvers to ensure VMs are able to communicate with one another.  The hosts file is modified different depending on provider to include a reachable IP.
-
-Another facet of VagrantSpice recognizes that RSYNC or NFS may not be the best methods to synchornize files to the target machine since this connectivity can be limiting and prone to inconsistent behavior.  For this we have implemented some basic examples of leveraging private object stores to synchronize files.  The objects stores are configured independently of machine providers.
-
-The first example of VagrantSpice is to deploy a Puppet Master and Agent machines in a working fashion across cloud providers.  This kind of configuration management is software is important in this case since we are using stock images from the providers that although aligned, may still present subtle differences that something like Puppet should help overcome.  This is of course optional and can be superseded by other tools.
+Different public cloud providers leverage different networking capabilities.  Some assign public IPs directly to interfaces of the machine, while others leverage NAT and private IP spaces.  In addition, some provide intra-VM communication between machines while others only allow communication through public IP addresses.  VagrantSpice has many options here, but the default is to allow communication between VMs using the public internet routable IP address to maintain cloud interoperability.
 
 <br>
 
+Version
+-------
+VagrantSpice is currently in early proof of concept strages on its second version.
+
+<br>
 
 Configured Machine Providers
 -----------------
@@ -30,7 +30,7 @@ The following providers have been configured already within VagrantSpice.  If th
 AWS
 
 	  'aws' => {
-	    :access_key_id => 'AKIAJPBGSO3SZ3V4EHDA',
+	    :access_key_id => 'AKIAJPBGSO3SZ3V4EHDD',
 	    :secret_access_key => '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',
 	    :keypair_name => 'dicey1',
 	    :private_key => 'cert/dicey1.pem',
@@ -41,7 +41,7 @@ Azure
 	  'azure' => {
 	    :mgmt_certificate => 'cert/azure.pem',
 	    :mgmt_endpoint => 'https://management.core.windows.net',
-	    :subscription_id => 'dbeb65ad-1dea-4528-ad5d-b1082da2f799',
+	    :subscription_id => 'dbeb65ad-1dea-4528-ae5d-b1082da2f799',
 	    :storage_acct_name => 'portalvhds6qmhy1bc0fqn8',    
 	    :private_key => 'cert/azure.pem',
 	    :public_cert => 'cert/azure.cer',
@@ -51,7 +51,7 @@ Azure
 Digital Ocean  
 
 	  'digital_ocean' => {
-	    :token => 'be83edcfb41fd19806ed7dc034b45e60942b65ceb2c8386540017f5c7c0c83a7',
+	    :token => 'be83edcfb41fd19806ed7dc034b45e60942b65cdb2c8386540017f5c7c0c83a7',
 	    :private_key => 'cert/digital_ocean',
 	    :ssh_key_name => 'Vagrant',
 	  },
@@ -60,7 +60,7 @@ Google (GCE)
 
 	  'google' => {
 	    :google_project_id => 'lucid-sol-713',
-	    :google_client_email  => '1011620534039-bk95sa499437crqm3qtid4e0nnhn5tos@developer.gserviceaccount.com',
+	    :google_client_email  => '1011620534039-bk95sa499437crqm3qtid4e0nnhn6tos@developer.gserviceaccount.com',
 	    :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
 	    :private_key => "cert/google_compute_engine",
 	  },
@@ -69,7 +69,7 @@ Rackspace
 
 	  'rackspace' => {
 	    :username => 'username',
-	    :api_key  => 'df7303cdceeb40c6a0aae3b6778e8759',
+	    :api_key  => 'df7303cdceeb40d6a0aae3b6778e8759',
 	    :keypair_name => 'id_rsa',
 	    :private_key => 'cert/id_rsa',
 	  },
@@ -77,41 +77,6 @@ Rackspace
 Virtual Box  
 
 	N/A
-
-Object Providers
-----------------
-AWS S3 
-  
-	'aws_s3' => {
-	    :access_key_id => 'AKIAJPBGTO3TZ2V4EHDA',
-	    :secret_access_key => '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',
-	    :s3_host_base => 's3.amazonaws.com',
-	    :s3_host_bucket => '%(bucket)s.s3.amazonaws.com',
-	  },
-	  
-Azure Files  
-
-	  'azure_files' => {
-	    :storage_access_key => 'BvvjCdFcBFgvd+deD+NkhREOR+Tk+VmaWXwLmm7TcBOcVuDajg8wY0vOrbd1DYPisc8Xwyvm4axXqn8IfbrINA==',
-	    :storage_account => 'portalvhds6qmhy1bc0fqn8',
-	  },
-	  
-Google Storage  
-
-	  'google_storage' => {
-	    :service_account => '12123123123213-123123123asd@developer.gserviceaccount.com',
-	    :key_file  => '/tmp/cert/My First Project-fffcc674adc0.p12',
-	  },
-	  
-Rackspace Swift  
-
-	  'rackspace_swift' => {
-	    :st_user => 'clintonskitson',
-	    :st_key  => '93aef92e3..',
-	    :st_auth => 'https://auth.api.rackspacecloud.com/v1.0',
-	  },
-
-
 
 <br><br>
 <hr>
@@ -127,6 +92,7 @@ The following table represents the similar images among default configured provi
 | Image   |  AWS  |  Azure      |  Digital Ocean  |  Google  |  Rackspace  |  Virtualbox
 |----------|:-------------:|------:|------:|----:|----:|----:  
 |CentOS-64-x64|ami-454b5e00|5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926|6.5 x64|centos-6-v20141021|CentOS 6.5 (PVHVM)|puppetlabs/centos-6.5-64-nocm (box)
+|CoreOS-444.5.0-(stable)|ami-856772c0|2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0||coreos-stable-444-5-0-v20141016|CoreOS (Stable)|494.5.0 (stable)|
 
 
 Instances
@@ -162,11 +128,11 @@ VagrantSpicedir/
 └─── provider.../
 	 └─── cert/
 	 |  Vagrantfile
-	 |  boxes.rb
+	 |  boxes_config.rb
 └─── provider.../
 	 └─── cert/
 	 |  Vagrantfile
-	 |  boxes.rb
+	 |  boxes_config.rb
 └─── spice-conf
 	 |  config_steps.rb
 	 |  consumer_config.rb
@@ -182,175 +148,312 @@ VagrantSpicedir/
 
 Install
 -------
-VagrantSpice requires that providers are generally working with a normal Vagrantfile first.  The primary details here are specific to authenticaiton.  With this you can take the configuration parameters and populate them in the spice-conf/consumer_config.rb file along with populating relavant certificate files in the provier/cert directory.
+VagrantSpice requires that providers are generally working with a normal Vagrantfile first.  The primary details here are specific to authenticaiton.  With this you can take the configuration parameters and populate them in the spice-conf/consumer_config.rb file along with populating relavant certificate files in the provider/cert directory.
 
 
 	git clone https://github.com/emccode/vagrantspice
 	cd vagrant-spice/VagrantSpicedir  
-	vi spice-conf/consumer_config.rb  
-	cp cert provider/cert
+	vi spice-conf/consumer_config.rb
+	mkdir provider/cert
+	cp yourcertdir/cert provider/cert/.
 
 Networking
 ----------
-Different providers deal with networking in different ways.  Most providers have default firewall settings in place to protect intra-vm communication.  In order to get a default multi-machine setup working, you likely need to enable firewall setings to allow communication inbound to the VM.  This is something that should be tested with the native Vagrant provider before using VagrantSpice.  The suggestion is to at a minimum open SSH (tcp 22), and Puppet (tcp 8140) inbound to the VMs.  The outbound should also be considered, and likely wide open.
+Different providers deal with networking in different ways.  Most providers have default firewall settings in place to protect intra-vm communication.  In order to get a default multi-machine setup working, you likely need to enable firewall setings to allow communication inbound to the VM.  This is something that should be tested with the native Vagrant provider before using VagrantSpice.  
+
+For the CoreOS demo, at a minimum ```TCP 4001 and 7001``` need to be open to allow proper ```etcd``` communications.  As well, ```TCP 22``` must be open for ```SSH```.
 
 
 Machine Customization
 -------------
-The boxes.rb file specifies the names of the machines and the types.  These types can be defined exclusively or as shared types in the image configuration files.
+The boxes_config.rb file specifies the names of the machines and the types.  There are a range of possibities as far as where to declare the different variables.  More detail to come later, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` is very rough currently, but can provide insight to priority and ordering.
+
+	{
+	  :boxes => [
+	    { 
+	      :hostname  =>  'google-coreos01',
+	    },
+	    { 
+	      :hostname  =>  'google-coreos02',
+	    },
+	  ],
+	  :boxes_type => 'coreos',
+	}
 
 
-	boxes = [
-	  { 
-	    :hostname  =>  'puppetmaster',
-	    :type      =>  'puppetmaster',
-	  },
-	  { 
-	    :hostname  =>  'puppetagent1',
-	    :type      =>  'puppetagent',
-	  },
-	]
 
 Usage
 -------
-By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically creating proper Vagrantfile parameters that allow Vagrant to create machines as normal. 
+By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically creating proper Vagrantfile parameters that allow Vagrant to create machines as normal.
 
-	cd VagrantSpicedir/aws  
-	vagrant up --no-parallel
+	cd VagrantSpicedir/
+	curl https://discovery.etcd.io/new
+	vi spice-conf/consumer_config.rb
+	- find :etcd_url and replace the URL
+	cd provider1
+	vagrant up
+	cd ../provider2
+	vagrant up
+
+	
+If you choose a single vm name, you must also specify the ```--provider=name``` flag.
 
 
 Example provider-config.rb
 ---------------------------
-	  'rackspace' => {
+	  {
+	  'google' => {
 	    :requires => "
-	      require 'vagrant-rackspace'
+	      require 'vagrant-google'
 	      require 'vagrant-hostmanager'
+	      require 'fog/version'
 	    ",
 	    :use_bucket => true,
 	    :sync_folder => "
 	      deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
 	    ",
-	    :box => 'dummy',
+	    :box => 'gce',
 	    :defaults => {
 	      :common_location_name => 'us_west',
 	      :common_image_name => 'CentOS-6.5-x64',
 	      :common_instance_type => 'small',
 	    },
-	    :ip_resolver => $ip_resolver[:ifconfig].call('eth1'),
+	    :ip_resolver => $ip_resolver[:ssh_ip],
 	    :instances_config => {
 	      'puppetmaster' => {
 	        :common_instance_type => 'small',
 	        :common_image_name => 'CentOS-6.5-x64',
 	        :config_steps_type => 'default_linux',
-	        :object_source => 'rackspace_swift',
-	        :repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
+	        #:object_source => 'google_storage',
+	        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
+	        :sync_folder => "
+	          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
+	          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+	        ",
 	        :object_creds => {
-	          :st_key => $consumer_config['rackspace_swift'][:st_key],
-	          :st_user => $consumer_config['rackspace_swift'][:st_user],
-	          :st_auth => $consumer_config['rackspace_swift'][:st_auth],
+	          :service_account => $consumer_config['google_storage'][:service_account],
+	          :key_file => $consumer_config['google_storage'][:key_file],
 	        },
 	        :commands => {
 	          :dns_update => $images_config['default_linux'][:dns_update],
 	          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
 	          :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
 	          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-	          :sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
+	          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
 	        }
 	      },
 	      'puppetagent' => {
 	        :common_instance_type => 'medium',
 	        :common_image_name => 'CentOS-6.5-x64',
 	        :config_steps_type => 'default_linux',
+	        #:disk_size => 110,
 	        :commands => {
 	          :dns_update => $images_config['default_linux'][:dns_update],
 	          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
 	          :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-	          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) },
+	          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
 	        }        
+	      },
+	      'coreos' => {
+	        :common_instance_type => 'small',
+	        :common_image_name => 'CoreOS-444.5.0-(stable)',
+	        :config_steps_type => 'default_coreos',
+	        :commands => {
+	          :pre_install => '',
+	          :install => proc {|config_param|  },
+	          :post_install => proc {|config_param| " 
+	public_ipv4=`curl -s ip.alt.io`
+
+	cat <<EOF > /usr/share/oem/cloud-config.yml
+	#cloud-config
+
+	coreos:
+	  etcd:
+	    discovery: #{config_param[:etcd_url]}
+	    addr: $public_ipv4:4001
+	    peer-addr: $public_ipv4:7001
+	    peer-election-timeout: 500
+	    peer-heartbeat-interval: 100
+	  fleet:
+	    public-ip: $public_ipv4
+	    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
+	  units:
+	      - name: etcd.service
+	        command: start
+	      - name: fleet.service
+	        command: start
+	EOF
+	        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+	"
+	        } }        
 	      },
 	    },
 	    :deploy_box_config => "
-	      deploy_config.vm.provider :rackspace do |rs,override|
-	        rs.username = $consumer_config[$provider][:username]
-	        rs.api_key  = $consumer_config[$provider][:api_key]
-	        rs.server_name = box[:hostname]
+	      deploy_config.vm.provider :google do |google, override|
+	        google.google_project_id = $consumer_config[$provider][:google_project_id]
+	        google.google_client_email = $consumer_config[$provider][:google_client_email]
+	        google.google_key_location = $consumer_config[$provider][:google_key_location]
+	        google.image = instance_image
 	        eval(str_instance_type)
-	        rs.image    = instance_image
-	        eval(str_location)
+	        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
+	        google.disk_size = disk_size unless !disk_size
 
-	        rs.key_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box[:type]][:keypair_name] || $consumer_config[$provider][:keypair_name]
-	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+
+	        eval(str_location)
+	        google.name = box[:hostname]
+	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
 	        override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
 	      end
 	    ",
 	    :images_config => {
-	      'CentOS 6.5 (PVHVM)' => {
-	        :ssh_username => 'root'
+	      'centos-6-v20141021' => {
+	        :ssh_username => 'clintonkitson'
+	      },
+	      'coreos-stable-444-5-0-v20141016' => {
+	        :ssh_username => 'core'
 	      }
 	    },
 	    :images_lookup => {
-	      'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+	      'CentOS-6.5-x64' => 'centos-6-v20141021',
+	      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
 	    },
 	    :instance_type_lookup => {
 	      'small' => {
-	        :name => "rs.flavor = '1 GB General Purpose v1'",
+	        :name => "google.machine_type = 'n1-standard-1'",
 	        :type => :alias,
 	      },
 	      'medium' => {
-	        :name => "rs.flavor  = '2 GB General Purpose v1'",
+	        :name => "google.machine_type  = 'n1-standard-2'",
 	        :type => :alias,
 	      },
 	    },
 	    :location_lookup => {
 	      'us_west' => "
-	        rs.rackspace_region = :dfw
+	        google.zone = 'us-central1-a'
 	      "
 	    },
-	  }
+	  },
+	}
 	  
 :deploy\_box\_config
 ------------------
-The :deploy\_box\_config key contains a value that resembles the default configuration paramters of the provider.  Notice how the parameters are filled in with variables that reference multiple locations to possible find the values.
+The :deploy\_box\_config key contains a value that resembles the default configuration parameters that are typically in the Vagrantfile specific to the provider.  Notice how the parameters are filled in with variables that reference multiple locations to possible find the values.
  
 	    :deploy_box_config => "
-	      deploy_config.vm.provider :rackspace do |rs,override|
-	        rs.username = $consumer_config[$provider][:username]
-	        rs.api_key  = $consumer_config[$provider][:api_key]
-	        rs.server_name = box[:hostname]
+	      deploy_config.vm.provider :google do |google, override|
+	        google.google_project_id = $consumer_config[$provider][:google_project_id]
+	        google.google_client_email = $consumer_config[$provider][:google_client_email]
+	        google.google_key_location = $consumer_config[$provider][:google_key_location]
+	        google.image = instance_image
 	        eval(str_instance_type)
-	        rs.image    = instance_image
-	        eval(str_location)
+	        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
+	        google.disk_size = disk_size unless !disk_size
 
-	        rs.key_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box[:type]][:keypair_name] || $consumer_config[$provider][:keypair_name]
-	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box[:type]][:private_key] || $consumer_config[$provider][:private_key]
+
+	        eval(str_location)
+	        google.name = box[:hostname]
+	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
 	        override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
 	      end
 	    ",
 
-Puppet specific Site.pp hook
-----------------------------
-The provider_config.rb specifies the provider configurations per instance type.  As an example, the Puppet Master includes a file (site.pp) that controls which nodes receive which configurations.   There is a hook that allows this to be downloaded from a specific URL.
 
-	:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
+:instance\_type\_lookup
+-----------------------
+This is a peak at the abstraction for the instance type.  Here you can see a call to small refers to the ```google.machine_type``` parameter and ```n1-standard-1```.
+
+	    :instance_type_lookup => {
+	      'small' => {
+	        :name => "google.machine_type = 'n1-standard-1'",
+	        :type => :alias,
+	      },
+	      'medium' => {
+	        :name => "google.machine_type  = 'n1-standard-2'",
+	        :type => :alias,
+	      },
+	    },
+
+
+:images\_lookup
+--------------
+This corresponds to generic names such as ```CoreOS-444.5.0-(stable)``` and referring to the actual image name of ```coreos-stable-444-5-0-v20141016``` at Google.
+
+	    :images_lookup => {
+	      'CentOS-6.5-x64' => 'centos-6-v20141021',
+	      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
+	    },
+	    
+:images\_config
+--------------
+Here we specify the image name at the provider followed by which ssh username must be used for that image.  In the case of the CentOS image, the name on the certificate supplied is used.  But in the case of CoreOS the default ```core``` username is used.
+
+	    :images_config => {
+	      'centos-6-v20141021' => {
+	        :ssh_username => 'clintonkitson'
+	      },
+	      'coreos-stable-444-5-0-v20141016' => {
+	        :ssh_username => 'core'
+	      }
+	    },
+
+:instances\_config
+-----------------
+This area allows us to configure the custom ```cloud-config``` file.  As part of the CoreOS process we are actually creating a new file and running the standard ```coreos-cloudinit``` command against this new file.
+
+Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  This does a ```whoami``` request to ```ip.alt.io``` which returns the IP that the machine is known as publicly.  This is what we use as the public address.
+
+  
+
+	'coreos' => {
+	        :common_instance_type => 'small',
+	        :common_image_name => 'CoreOS-444.5.0-(stable)',
+	        :config_steps_type => 'default_coreos',
+	        :commands => {
+	          :pre_install => '',
+	          :install => proc {|config_param|  },
+	          :post_install => proc {|config_param| " 
+	public_ipv4=`curl -s ip.alt.io`
+
+	cat <<EOF > /usr/share/oem/cloud-config.yml
+	#cloud-config
+
+	coreos:
+	  etcd:
+	    discovery: #{config_param[:etcd_url]}
+	    addr: $public_ipv4:4001
+	    peer-addr: $public_ipv4:7001
+	    peer-election-timeout: 500
+	    peer-heartbeat-interval: 100
+	  fleet:
+	    public-ip: $public_ipv4
+	    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
+	  units:
+	      - name: etcd.service
+	        command: start
+	      - name: fleet.service
+	        command: start
+	EOF
+	        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
+	"
+	        } }        
+	      },
 
 
 Other defaults
 --------------
 The consumer_config.rb file contains other defaults and plugin configurations.
 
-Notie the default domain name configuration and HostManager enablement settings.  The :plugin_config_vm is a per machine setting which is being used to ensure the proper alias is tagged per machine.
+Notice the ```core``` default parameter for ```etcd_url```.  This must be updated by issuing a  ```https://discovery.etcd.io/new``` command and retrieving the URL shown.
 
 	  :defaults => {
-	    :domain => 'scaleio.local',
-	    :plugin_config => "
-	      config.hostmanager.enabled = true
-	      config.hostmanager.manage_host = false
-	      config.hostmanager.ignore_private_ip = true
-	      config.hostmanager.include_offline = false
-	    ",
-	    :plugin_config_vm => "
-	      deploy_config.hostmanager.aliases = box[:hostname] 
-	    ",
+	    :domain => "vagrantspice.local",
+	    :instances_config => {
+	      'coreos' => {
+	        :config_param => '{
+	          :etcd_url => "https://discovery.etcd.io/5a06f86a07db91ca220545745f890a98",
+	        }',
+	      }
+	    },
 	  }
 	  
 
@@ -380,7 +483,7 @@ For those interested, here is what is left of a Vagrantfile in a provider direct
 	  eval("$#{var_name} = #{contents}")
 	}
 
-	boxes = eval(File.read('./boxes.rb'))
+	boxes = eval(File.read('./boxes_config.rb'))
 
 	$provider = File.basename(Dir.getwd)
 	eval($provider_config[$provider][:requires])
@@ -406,7 +509,7 @@ As an abstraction above a Vagrantfile you will find a lot of the settings are do
 
 Future Statement
 ----------------
-The project currently is serving as Vagrantfile abstraction.  We hope that in the future Vagrant might have a framework to ensure the providers have common parameters making this kind of endeavor obsolete.  Otherwise, the focus here will be to ensure there is complete abstraction to allow for complete customization if needed.  The work here could be bundled into a Vagrant plugin as well.
+The project currently is serving as Vagrantfile abstraction.  You can think of it as bringing structure to something that through a domain specific language was unstructured but very powerful.  The downside is that it is currently a layer above Vagrant which can make it difficult to troubleshoot with standard Vagrant knowledge.  Let's see where this goes!
 
 Notes
 -----
