@@ -31,18 +31,19 @@ Vagrant.configure("2") do |config|
     domain = box[:domain] || $consumer_config[$provider][:domain] || $consumer_config[:defaults][:domain]
     common_image_name = box[:common_image_name] || $provider_config[$provider][:instances_config][box_type][:common_image_name] || $provider_config[$provider][:defaults][:common_image_name]
     config_steps_type = box[:config_steps_type] || $provider_config[$provider][:instances_config][box_type][:config_steps_type]
-    instance_image = $provider_config[$provider][:images_lookup][common_image_name]
-    
+
+    location = box[:common_location_name] || $provider_config[$provider][:instances_config][box_type][:common_location_name] || $provider_config[$provider][:defaults][:common_location_name]
+    str_location = $provider_config[$provider][:location_lookup][location] if $provider_config[$provider][:location_lookup]
+
+    instance_image = $provider_config[$provider][:images_lookup][location][common_image_name]
+
     common_instance_type = box[:common_instance_type] || $provider_config[$provider][:instances_config][box_type][:common_instance_type] || $provider_config[$provider][:defaults][:common_instance_type]
-    instance_type = $provider_config[$provider][:instance_type_lookup][common_instance_type]
+    instance_type = $provider_config[$provider][:instance_type_lookup][location][common_instance_type]
     if instance_type[:type] == :custom
       str_instance_type = [instance_type[:memory],instance_type[:cpus]].join("\n")
     else
       str_instance_type = instance_type[:name]
     end
-
-    location = box[:common_location_name] || $provider_config[$provider][:instances_config][box_type][:common_location_name] || $provider_config[$provider][:defaults][:common_location_name]
-    str_location = $provider_config[$provider][:location_lookup][location] if $provider_config[$provider][:location_lookup]
 
     str_optional = box[:optional] || $provider_config[$provider][:instances_config][box_type][:optional] || $provider_config[$provider][:defaults][:optional]
 
@@ -66,7 +67,16 @@ Vagrant.configure("2") do |config|
         || $provider_config[:defaults][:config_param]
       config_param = eval(config_param_str)
 
-      bootstrap_script = $config_steps[config_steps_type].call(box_type,config_param)
+      box_param = {
+        :common_instance_type => common_instance_type,
+        :common_image_name => common_image_name,
+        :location => location,
+        :domain => domain,
+        :box_type => box_type,
+        :fqdn => fqdn,
+      }
+
+      bootstrap_script = $config_steps[config_steps_type].call(box_type,config_param,box_param)
       deploy_config.vm.provision :shell, :inline => bootstrap_script
     end
   end

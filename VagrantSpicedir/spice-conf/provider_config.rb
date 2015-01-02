@@ -54,12 +54,12 @@
       },
       'coreos' => {
         :common_instance_type => 'small',
-        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param| " 
+          :post_install => proc {|config_param,box_param| " 
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -74,7 +74,7 @@ coreos:
     peer-heartbeat-interval: 100
   fleet:
     public-ip: $public_ipv4
-    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
   units:
       - name: etcd.service
         command: start
@@ -107,28 +107,102 @@ EOF
       'centos-6-v20141021' => {
         :ssh_username => 'clintonkitson'
       },
-      'coreos-stable-444-5-0-v20141016' => {
+      'coreos-stable-494-5-0-v20141215' => {
+        :ssh_username => 'core'
+      },
+      'coreos-beta-522-3-0-v20141226' => {
+        :ssh_username => 'core'
+      },
+      'coreos-alpha-549-0-0-v20150102' => {
         :ssh_username => 'core'
       }
     },
     :images_lookup => {
-      'CentOS-6.5-x64' => 'centos-6-v20141021',
-      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
+      'us_central' => {
+        'CentOS-6.5-x64' => 'centos-6-v20141021',
+        'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
+        'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
+        'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+      },
+      'europe_west' => {
+        'CentOS-6.5-x64' => 'centos-6-v20141021',
+        'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
+        'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
+        'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+      },
+      'asia_east' => {
+        'CentOS-6.5-x64' => 'centos-6-v20141021',
+        'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
+        'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
+        'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+      },
     },
     :instance_type_lookup => {
-      'small' => {
-        :name => "google.machine_type = 'n1-standard-1'",
-        :type => :alias,
+      'us_central' => {
+        'micro' => {
+          :name => "google.machine_type = 'f1-micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "google.machine_type = 'n1-standard-1'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "google.machine_type  = 'n1-standard-2'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "google.machine_type  = 'n1-standard-8'",
+          :type => :alias,
+        },
       },
-      'medium' => {
-        :name => "google.machine_type  = 'n1-standard-2'",
-        :type => :alias,
+      'europe_west' => {
+        'micro' => {
+          :name => "google.machine_type = 'f1-micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "google.machine_type = 'n1-standard-1'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "google.machine_type  = 'n1-standard-2'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "google.machine_type  = 'n1-standard-8'",
+          :type => :alias,
+        },
+      },
+      'asia_east' => {
+        'micro' => {
+          :name => "google.machine_type = 'f1-micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "google.machine_type = 'n1-standard-1'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "google.machine_type  = 'n1-standard-2'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "google.machine_type  = 'n1-standard-8'",
+          :type => :alias,
+        },
       },
     },
     :location_lookup => {
-      'us_west' => "
-        google.zone = 'us-central1-a'
-      "
+      'us_central' => "
+        google.zone = 'us-central1-f'
+      ",
+      'europe_west' => "
+        google.zone = 'europe-west1-b'
+      ",
+      'asia_east' => "
+        google.zone = 'asia-east1-a'
+      ",
     },
   },
   'rackspace' => {
@@ -142,7 +216,7 @@ EOF
     ",
     :box => 'dummy',
     :defaults => {
-      :common_location_name => 'us_west',
+      :common_location_name => 'us_east',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
     },
@@ -180,12 +254,12 @@ EOF
       },
       'coreos' => {
         :common_instance_type => 'small',
-        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param| " 
+          :post_install => proc {|config_param,box_param| " 
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -200,13 +274,12 @@ coreos:
     peer-heartbeat-interval: 100
   fleet:
     public-ip: $public_ipv4
-    metadata: region=us_west,provider=rackspace,platform=cloud,instance_type=small
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
   units:
       - name: etcd.service
         command: start
       - name: fleet.service
         command: start
-
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
@@ -233,25 +306,127 @@ EOF
       },
       'CoreOS (Stable)' => {
         :ssh_username => 'core'
-      }
+      },
+      'CoreOS (Beta)' => {
+        :ssh_username => 'core'
+      },
+      'CoreOS (Alpha)' => {
+        :ssh_username => 'core'
+      },
     },
     :images_lookup => {
-      'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
-      'CoreOS-444.5.0-(stable)' => 'CoreOS (Stable)',
+      'us_central' => {
+        'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+        'CoreOS-stable' => 'CoreOS (Stable)',
+        'CoreOS-beta' => 'CoreOS (Beta)',
+        'CoreOS-alpha' => 'CoreOS (Alpha)',
+      },
+      'us_east' => {
+        'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+        'CoreOS-stable' => 'CoreOS (Stable)',
+        'CoreOS-beta' => 'CoreOS (Beta)',
+        'CoreOS-alpha' => 'CoreOS (Alpha)',
+      },
+      'asia_east' => {
+        'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+        'CoreOS-stable' => 'CoreOS (Stable)',
+        'CoreOS-beta' => 'CoreOS (Beta)',
+        'CoreOS-alpha' => 'CoreOS (Alpha)',
+      },
+      'aus_east' => {
+        'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
+        'CoreOS-stable' => 'CoreOS (Stable)',
+        'CoreOS-beta' => 'CoreOS (Beta)',
+        'CoreOS-alpha' => 'CoreOS (Alpha)',
+      },
+
     },
     :instance_type_lookup => {
-      'small' => {
-        :name => "rs.flavor = '1 GB General Purpose v1'",
-        :type => :alias,
+      'us_central' => {
+        'micro' => {
+          :name => "rs.flavor = '512MB Standard Instance'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "rs.flavor = '1GB Standard Instance'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "rs.flavor  = '2 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
       },
-      'medium' => {
-        :name => "rs.flavor  = '2 GB General Purpose v1'",
-        :type => :alias,
+      'us_east' => {
+        'micro' => {
+          :name => "rs.flavor = '512MB Standard Instance'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "rs.flavor = '1GB Standard Instance'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "rs.flavor  = '2 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
+      },
+      'asia_east' => {
+        'micro' => {
+          :name => "rs.flavor = '512MB Standard Instance'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "rs.flavor = '1GB Standard Instance'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "rs.flavor  = '2 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
+      },
+      'aus_east' => {
+        'micro' => {
+          :name => "rs.flavor = '512MB Standard Instance'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "rs.flavor = '1GB Standard Instance'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "rs.flavor  = '2 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
       },
     },
     :location_lookup => {
-      'us_west' => "
+      'us_central' => "
         rs.rackspace_region = :dfw
+      ",
+      'us_east' => "
+        rs.rackspace_region = :iad
+      ",
+      'asia_east' => "
+        rs.rackspace_region = :hkg
+      ",
+      'aus_east' => "
+        rs.rackspace_region = :syd
       "
     },
   },
@@ -267,7 +442,7 @@ EOF
     ",
     :box => 'azure',
     :defaults => {
-      :vm_location => 'West US',
+      :vm_location => 'us_west',
       :common_image_image => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
     },
@@ -320,16 +495,17 @@ EOF
       },
       'coreos' => {
         :common_instance_type => 'small',
-        :common_image_name => 'CoreOS-509.1.0-(alpha)',
+        :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :firewall_settings => '4001:4001,7001:7001',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param| " 
+          :post_install => proc {|config_param,box_param| " 
 public_ipv4=`curl -s ip.alt.io`
 
-echo \"#cloud-config
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
 
 coreos:
   etcd:
@@ -340,13 +516,13 @@ coreos:
     peer-heartbeat-interval: 100
   fleet:
     public-ip: $public_ipv4
-    metadata: region=us_west,provider=azure,platform=cloud,instance_type=small
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
   units:
       - name: etcd.service
         command: start
       - name: fleet.service
         command: start
-\" > /usr/share/oem/cloud-config.yml
+EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
         } }        
@@ -357,29 +533,241 @@ coreos:
         :ssh_username => 'centos',
         :box => 'azure'
       },
-      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0' => {
+      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0' => {
         :ssh_username => 'core',
         :box => 'azure'
-      }
+      },
+      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0' => {
+        :ssh_username => 'core',
+        :box => 'azure'
+      },
+      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0' => {
+        :ssh_username => 'core',
+        :box => 'azure'
+      },
     },
     :images_lookup => {
-      'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
-      'CoreOS-509.1.0-(alpha)' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0',
+      'asia_east' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'aus_east' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'europe_north' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'europe_west' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'japan_west' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'us_central' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'us_east' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
+      'us_west' => {
+        'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
+        'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
+        'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+      },
     },
     :instance_type_lookup => {
-      'small' => {
-        :name => "azure.vm_size = 'Small'",
-        :type => :alias,
+      'asia_east' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
       },
-      'medium' => {
-        :name => "azure.vm_size = 'Medium'",
-        :type => :alias,
+      'aus_east' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'europe_north' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'europe_west' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'japan_west' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'us_central' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'us_east' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+      },
+      'us_west' => {
+        'micro' => {
+          :name => "azure.vm_size = 'ExtraSmall'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "azure.vm_size = 'Small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "azure.vm_size = 'Medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
       },
     },
     :location_lookup => {
+      'asia_east' => "
+        azure.vm_location = 'East Asia'
+      ",
+      'aus_east' => "
+        azure.vm_location = 'Australia East'
+      ",
+      'europe_north' => "
+        azure.vm_location = 'North Europe'
+      ",
+      'europe_west' => "
+        azure.vm_location = 'West Europe'
+      ",
+      'japan_west' => "
+        azure.vm_location = 'Japan West'
+      ",
+      'us_central' => "
+        azure.vm_location = 'Central US'
+      ",
       'us_west' => "
         azure.vm_location = 'West US'
-      "
+      ",
+      'us_east' => "
+        azure.vm_location = 'East US'
+      ",
+
     }, 
   },
   'digital_ocean' => {  
@@ -424,15 +812,16 @@ coreos:
       },
       'coreos' => {
         :common_instance_type => 'small',
-        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param| " 
-public_ipv4=`echo $SSH_CONNECTION | awk '{print $3}'`
+          :post_install => proc {|config_param,box_param| " 
+public_ipv4=`curl -s ip.alt.io`
 
-echo \"#cloud-config
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
 
 coreos:
   etcd:
@@ -443,13 +832,13 @@ coreos:
     peer-heartbeat-interval: 100
   fleet:
     public-ip: $public_ipv4
-    metadata: region=us_west,provider=digital_ocean,platform=cloud,instance_type=small
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
   units:
       - name: etcd.service
         command: start
       - name: fleet.service
         command: start
-\" > /usr/share/oem/cloud-config.yml
+EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
         } }        
@@ -478,25 +867,154 @@ coreos:
       '494.5.0 (stable)' => {
         :ssh_username => 'core'
       },
+      '522.3.0 (beta)' => {
+        :ssh_username => 'core'
+      },
+      '540.0.0 (alpha)' => {
+        :ssh_username => 'core'
+      },
     },
     :images_lookup => {
-      'CentOS-6.5-x64' => '6.5 x64',
-      'CoreOS-444.5.0-(stable)' => '494.5.0 (stable)',
+      'us_west' => {
+        'CentOS-6.5-x64' => '6.5 x64',
+        'CoreOS-stable' => '494.5.0 (stable)',
+        'CoreOS-beta' => '522.3.0 (beta)',
+        'CoreOS-alpha' => '540.0.0 (alpha)',
+      },
+      'us_east' => {
+        'CentOS-6.5-x64' => '6.5 x64',
+        'CoreOS-stable' => '494.5.0 (stable)',
+        'CoreOS-beta' => '522.3.0 (beta)',
+        'CoreOS-alpha' => '540.0.0 (alpha)',
+      },
+      'asia_east' => {
+        'CentOS-6.5-x64' => '6.5 x64',
+        'CoreOS-stable' => '494.5.0 (stable)',
+        'CoreOS-beta' => '522.3.0 (beta)',
+        'CoreOS-alpha' => '540.0.0 (alpha)',
+      },
+      'europe_west' => {
+        'CentOS-6.5-x64' => '6.5 x64',
+        'CoreOS-stable' => '494.5.0 (stable)',
+        'CoreOS-beta' => '522.3.0 (beta)',
+        'CoreOS-alpha' => '540.0.0 (alpha)',
+      },
+      'uk_east' => {
+        'CentOS-6.5-x64' => '6.5 x64',
+        'CoreOS-stable' => '494.5.0 (stable)',
+        'CoreOS-beta' => '522.3.0 (beta)',
+        'CoreOS-alpha' => '540.0.0 (alpha)',
+      },
     },
     :instance_type_lookup => {
-      'small' => {
-        :name => "digitalocean.size = '1gb'",
-        :type => :alias,
+      'us_west' => {
+        'micro' => {
+          :name => "digitalocean.size = '512mb'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "digitalocean.size  = '1gb'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "digitalocean.size = '2gb'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
       },
-      'medium' => {
-        :name => "digitalocean.size  = '2gb'",
-        :type => :alias,
+      'us_east' => {
+        'micro' => {
+          :name => "digitalocean.size = '512mb'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "digitalocean.size  = '1gb'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "digitalocean.size = '2gb'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
       },
+      'asia_east' => {
+        'micro' => {
+          :name => "digitalocean.size = '512mb'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "digitalocean.size  = '1gb'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "digitalocean.size = '2gb'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
+      },
+      'europe_west' => {
+        'micro' => {
+          :name => "digitalocean.size = '512mb'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "digitalocean.size  = '1gb'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "digitalocean.size = '2gb'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
+      },
+      'uk_east' => {
+        'micro' => {
+          :name => "digitalocean.size = '512mb'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "digitalocean.size  = '1gb'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "digitalocean.size = '2gb'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
+      },
+
     },
     :location_lookup => {
       'us_west' => "
         digitalocean.region = 'sfo1'
-      "
+      ",
+      'us_east' => "
+        digitalocean.region = 'nyc2'
+      ",
+      'asia_east' => "
+        digitalocean.region = 'sgp1'
+      ",
+      'europe_west' => "
+        digitalocean.region = 'ams1'
+      ",
+      'uk_east' => "
+        digitalocean.region = 'lon1'
+      ",
     },
   },
   'aws' => {  
@@ -541,15 +1059,16 @@ coreos:
       },
       'coreos' => {
         :common_instance_type => 'small',
-        :common_image_name => 'CoreOS-444.5.0-(stable)',
+        :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param| " 
+          :post_install => proc {|config_param,box_param| " 
 public_ipv4=`curl -s ip.alt.io`
 
-echo \"#cloud-config
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
 
 coreos:
   etcd:
@@ -560,13 +1079,13 @@ coreos:
     peer-heartbeat-interval: 100
   fleet:
     public-ip: $public_ipv4
-    metadata: region=us_west,provider=aws,platform=cloud,instance_type=small
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
   units:
       - name: etcd.service
         command: start
       - name: fleet.service
         command: start
-\" > /usr/share/oem/cloud-config.yml
+EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
         } }        
@@ -594,29 +1113,317 @@ coreos:
       'ami-454b5e00' => {
         :ssh_username => 'ec2-user'
       },
-      'ami-856772c0' => {
+      
+      'ami-17fae852' => {
+        :ssh_username => 'core'
+      },
+      'ami-019d8044' => {
+        :ssh_username => 'core'
+      },
+      'ami-cfc5d98a' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-705d3d18' => {
+        :ssh_username => 'core'
+      },
+      'ami-d8751bb0' => {
+        :ssh_username => 'core'
+      },
+      'ami-14741e7c' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-cf82af9d' => {
+        :ssh_username => 'core'
+      },
+      'ami-4f5d731d' => {
+        :ssh_username => 'core'
+      },
+      'ami-0f86a85d' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-d1e981eb' => {
+        :ssh_username => 'core'
+      },
+      'ami-6bacc751' => {
+        :ssh_username => 'core'
+      },
+      'ami-1b3e5421' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-f4853883' => {
+        :ssh_username => 'core'
+      },
+      'ami-0e73c879' => {
+        :ssh_username => 'core'
+      },
+      'ami-a41590d3' => {
+        :ssh_username => 'core'
+      },
+
+
+      'ami-487d4d55' => {
+        :ssh_username => 'core'
+      },
+      'ami-5027174d' => {
+        :ssh_username => 'core'
+      },
+      'ami-ace3d3b1' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-decfc0df' => {
+        :ssh_username => 'core'
+      },
+      'ami-4af1fc4b' => {
+        :ssh_username => 'core'
+      },
+      'ami-9a0f1b9b' => {
+        :ssh_username => 'core'
+      },
+
+      'ami-cb04b4d6' => {
+        :ssh_username => 'core'
+      },
+      'ami-dd6ddec0' => {
+        :ssh_username => 'core'
+      },
+      'ami-ebb406f6' => {
         :ssh_username => 'core'
       },
     },
     :images_lookup => {
-      'CentOS-6.5-x64' => 'ami-454b5e00',
-      'CoreOS-444.5.0-(stable)' => 'ami-856772c0',
+      'us_west' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-17fae852',
+        'CoreOS-beta' => 'ami-019d8044',
+        'CoreOS-alpha' => 'ami-cfc5d98a',
+      },
+      'us_east' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-705d3d18',
+        'CoreOS-beta' => 'ami-d8751bb0',
+        'CoreOS-alpha' => 'ami-14741e7c',
+      },
+      'asia_east' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-cf82af9d',
+        'CoreOS-beta' => 'ami-4f5d731d',
+        'CoreOS-alpha' => 'ami-0f86a85d',
+      },
+      'aus_east' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-d1e981eb',
+        'CoreOS-beta' => 'ami-6bacc751',
+        'CoreOS-alpha' => 'ami-1b3e5421',
+      },
+      'europe_west' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-f4853883',
+        'CoreOS-beta' => 'ami-0e73c879',
+        'CoreOS-alpha' => 'ami-a41590d3',
+      },
+      'europe_central' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-487d4d55',
+        'CoreOS-beta' => 'ami-5027174d',
+        'CoreOS-alpha' => 'ami-ace3d3b1',
+      },
+      'japan_west' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-decfc0df',
+        'CoreOS-beta' => 'ami-4af1fc4b',
+        'CoreOS-alpha' => 'ami-9a0f1b9b',
+      },
+      'sa_east' => {
+        'CentOS-6.5-x64' => 'ami-454b5e00',
+        'CoreOS-stable' => 'ami-cb04b4d6',
+        'CoreOS-beta' => 'ami-dd6ddec0',
+        'CoreOS-alpha' => 'ami-ebb406f6',
+      },
     },
     :instance_type_lookup => {
-      'small' => {
-        :name => "aws.instance_type = 't2.micro'",
-        :type => :alias,
+      'us_west' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
       },
-      'medium' => {
-        :name => "aws.instance_type  = 't2.medium'",
-        :type => :alias,
+      'us_east' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'asia_east' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'aus_east' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'europe_west' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'europe_central' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'japan_west' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+      },
+      'sa_east' => {
+        'micro' => {
+          :name => "aws.instance_type = 't2.micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "aws.instance_type  = 't2.small'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "aws.instance_type = 't2.medium'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
       },
     },
     :location_lookup => {
       'us_west' => "
         aws.region = 'us-west-1'
         aws.availability_zone = 'us-west-1b'
-      "
+      ",
+      'us_east' => "
+        aws.region = 'us-east-1'
+        aws.availability_zone = 'us-east-1a'
+      ",
+      'asia_east' => "
+        aws.region = 'ap-southeast-1'
+        aws.availability_zone = 'ap-southeast-1a'
+      ",
+      'aus_east' => "
+        aws.region = 'ap-southeast-2'
+        aws.availability_zone = 'ap-southeast-2a'
+      ",
+      'europe_west' => "
+        aws.region = 'eu-west-1'
+        aws.availability_zone = 'eu-west-1a'
+      ",
+      'europe_central' => "
+        aws.region = 'eu-central-1'
+        aws.availability_zone = 'eu-central-1a'
+      ",
+      'japan_west' => "
+        aws.region = 'ap-northeast-1'
+        aws.availability_zone = 'ap-northeast-1a'
+      ",
+      'sa_east' => "
+        aws.region = 'sa-east-1'
+        aws.availability_zone = 'sa-east-1a'
+      ",
     },
   },
   'virtualbox' => {

@@ -15,11 +15,11 @@
     #{$object_config[$provider_config[$provider][:instances_config][box_type][:object_source]][box_type][config_param[:common_image_name]][:download_commands].call(config_param[:object_creds]) unless !$provider_config[$provider][:instances_config][box_type][:object_source]}
 
   "},
-  'default_coreos' => proc {|box_type,config_param| "    
+  'default_coreos' => proc {|box_type,config_param,box_param| "    
     #{$provider_config[$provider][:instances_config][box_type][:commands][:pre_install]}
 
     #{$provider_config[$provider][:instances_config][box_type][:commands][:install].call(config_param)}
     
-    #{$provider_config[$provider][:instances_config][box_type][:commands][:post_install].call(config_param)}
+    #{$provider_config[$provider][:instances_config][box_type][:commands][:post_install].call(config_param,box_param)}
   "}
 }
