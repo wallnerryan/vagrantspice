@@ -70,8 +70,8 @@ coreos:
     discovery: #{config_param[:etcd_url]}
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
-    peer-election-timeout: 500
-    peer-heartbeat-interval: 100
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
   fleet:
     public-ip: $public_ipv4
     metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
@@ -270,8 +270,8 @@ coreos:
     discovery: #{config_param[:etcd_url]}
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
-    peer-election-timeout: 500
-    peer-heartbeat-interval: 100
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
   fleet:
     public-ip: $public_ipv4
     metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
@@ -512,8 +512,8 @@ coreos:
     discovery: #{config_param[:etcd_url]}
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
-    peer-election-timeout: 500
-    peer-heartbeat-interval: 100
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
   fleet:
     public-ip: $public_ipv4
     metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
@@ -828,8 +828,8 @@ coreos:
     discovery: #{config_param[:etcd_url]}
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
-    peer-election-timeout: 500
-    peer-heartbeat-interval: 100
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
   fleet:
     public-ip: $public_ipv4
     metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
@@ -870,7 +870,7 @@ EOF
       '522.3.0 (beta)' => {
         :ssh_username => 'core'
       },
-      '540.0.0 (alpha)' => {
+      '550.0.0 (alpha)' => {
         :ssh_username => 'core'
       },
     },
@@ -879,31 +879,31 @@ EOF
         'CentOS-6.5-x64' => '6.5 x64',
         'CoreOS-stable' => '494.5.0 (stable)',
         'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '540.0.0 (alpha)',
+        'CoreOS-alpha' => '550.0.0 (alpha)',
       },
       'us_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
         'CoreOS-stable' => '494.5.0 (stable)',
         'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '540.0.0 (alpha)',
+        'CoreOS-alpha' => '550.0.0 (alpha)',
       },
       'asia_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
         'CoreOS-stable' => '494.5.0 (stable)',
         'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '540.0.0 (alpha)',
+        'CoreOS-alpha' => '550.0.0 (alpha)',
       },
       'europe_west' => {
         'CentOS-6.5-x64' => '6.5 x64',
         'CoreOS-stable' => '494.5.0 (stable)',
         'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '540.0.0 (alpha)',
+        'CoreOS-alpha' => '550.0.0 (alpha)',
       },
       'uk_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
         'CoreOS-stable' => '494.5.0 (stable)',
         'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '540.0.0 (alpha)',
+        'CoreOS-alpha' => '550.0.0 (alpha)',
       },
     },
     :instance_type_lookup => {
@@ -1004,13 +1004,13 @@ EOF
         digitalocean.region = 'sfo1'
       ",
       'us_east' => "
-        digitalocean.region = 'nyc2'
+        digitalocean.region = 'nyc3'
       ",
       'asia_east' => "
         digitalocean.region = 'sgp1'
       ",
       'europe_west' => "
-        digitalocean.region = 'ams1'
+        digitalocean.region = 'ams3'
       ",
       'uk_east' => "
         digitalocean.region = 'lon1'
@@ -1075,8 +1075,8 @@ coreos:
     discovery: #{config_param[:etcd_url]}
     addr: $public_ipv4:4001
     peer-addr: $public_ipv4:7001
-    peer-election-timeout: 500
-    peer-heartbeat-interval: 100
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
   fleet:
     public-ip: $public_ipv4
     metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}

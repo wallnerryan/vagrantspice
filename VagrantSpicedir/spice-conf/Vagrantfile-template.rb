@@ -24,7 +24,6 @@ Vagrant.configure("2") do |config|
   boxes.each do |box|      
     box_type = box[:type] || boxes_config[:boxes_type] \
       || (eval(boxes_config[:config_param])[:type] unless !boxes_config[:config_param]) \
-      || (eval(boxes_config[:config_param])[:type] unless !boxes_config[:config_param]) \
       || (eval($provider_config[$provider][:defaults][:config_param])[:type] unless !$provider_config[$provider][:defaults][:config_param]) \
       || (eval($provider_config[:defaults][:config_param])[:type] unless !$provider_config[:defaults][:config_param])
     repo_url = box[:repo_url] || $provider_config[$provider][:instances_config][box_type][:repo_url] || $provider_config[$provider][:defaults][:repo_url]

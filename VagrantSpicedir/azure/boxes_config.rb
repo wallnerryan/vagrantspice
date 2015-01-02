@@ -51,5 +51,8 @@
 
   ],
   :boxes_type => 'coreos',
+  :config_param => '{
+      :etcd_url => "https://discovery.etcd.io/6c13141ccd2ffd80bc0ab0e752af3e27",
+    }',
 }
 
