@@ -92,7 +92,9 @@ The following table represents the similar images among default configured provi
 | Image   |  AWS  |  Azure      |  Digital Ocean  |  Google  |  Rackspace  |  Virtualbox
 |----------|:-------------:|------:|------:|----:|----:|----:  
 |CentOS-64-x64|ami-454b5e00|5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926|6.5 x64|centos-6-v20141021|CentOS 6.5 (PVHVM)|puppetlabs/centos-6.5-64-nocm (box)
-|CoreOS-stable|ami-856772c0|2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0||coreos-stable-444-5-0-v20141016|CoreOS (Stable)|494.5.0 (stable)|
+|CoreOS-stable||||
+|CoreOS-beta||||
+|CoreOS-alpha||||
 
 
 Instances
