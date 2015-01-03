@@ -451,14 +451,13 @@ EOF
         azure.mgmt_certificate = $consumer_config[$provider][:mgmt_certificate]
         azure.mgmt_endpoint = $consumer_config[$provider][:mgmt_endpoint]
         azure.subscription_id = $consumer_config[$provider][:subscription_id]
-        azure.storage_acct_name = $consumer_config[$provider][:storage_acct_name]
         
         azure.vm_image = instance_image
         eval(str_instance_type)
         azure.vm_user = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
 
         azure.vm_name = box[:hostname]
-        azure.vm_location = box[:vm_location] || $provider_config[$provider][:instances_config][box_type][:vm_location] || $provider_config[$provider][:defaults][:vm_location]
+        eval(str_location)
         azure.ssh_private_key_file = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         azure.ssh_certificate_file = box[:public_cert] || $provider_config[$provider][:instances_config][box_type][:public_cert] || $consumer_config[$provider][:private_key]
         azure.ssh_port = box[:ssh_port] || $provider_config[$provider][:instances_config][box_type][:ssh_port]
@@ -541,7 +540,7 @@ EOF
         :ssh_username => 'core',
         :box => 'azure'
       },
-      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0' => {
+      '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0' => {
         :ssh_username => 'core',
         :box => 'azure'
       },
@@ -557,43 +556,43 @@ EOF
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'europe_north' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'europe_west' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'japan_west' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_central' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_east' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_west' => {
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
-        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
+        'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
     },
     :instance_type_lookup => {
@@ -745,27 +744,35 @@ EOF
     :location_lookup => {
       'asia_east' => "
         azure.vm_location = 'East Asia'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}eastasia'
       ",
       'aus_east' => "
         azure.vm_location = 'Australia East'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}australiaeast'
       ",
       'europe_north' => "
         azure.vm_location = 'North Europe'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}northeurope'
       ",
       'europe_west' => "
         azure.vm_location = 'West Europe'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}westeurope'
       ",
       'japan_west' => "
         azure.vm_location = 'Japan West'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}japanwest'
       ",
       'us_central' => "
         azure.vm_location = 'Central US'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}centralus'
       ",
       'us_west' => "
         azure.vm_location = 'West US'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}westus'
       ",
       'us_east' => "
         azure.vm_location = 'East US'
+        azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}eastus'
       ",
 
     }, 

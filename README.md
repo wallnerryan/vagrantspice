@@ -2,7 +2,7 @@ VagrantSpice
 ============
 The purpose of VagrantSpice is to simplify and standardize how the different machine providers are configured across Vagrant cloud providers.
 
-The primary example in the current version is getting a CoreOS Fleet cluster up and running across Amazon AWS, Azure, Digital Ocean, Google, and Rackspace.
+The primary example in the current version is getting a CoreOS Fleet cluster up and running across Amazon AWS, Azure, Digital Ocean, Google, and Rackspace.  The current repository has 27 Data centers among these providers working with CoreOS images.
 
 If you take a peak at the VagrantspiceDir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
 
@@ -19,7 +19,7 @@ Different public cloud providers leverage different networking capabilities.  So
 
 Version
 -------
-VagrantSpice is currently in early proof of concept strages on its second version.
+VagrantSpice is currently in early proof of concept strages on its third version.
 
 <br>
 
@@ -30,8 +30,8 @@ The following providers have been configured already within VagrantSpice.  If th
 AWS
 
 	  'aws' => {
-	    :access_key_id => 'AKIAJPBGSO3SZ3V4EHDD',
-	    :secret_access_key => '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',
+	    :access_key_id => 'AKIAJPBHSO3SZ3V4EHDD',
+	    :secret_access_key => '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',
 	    :keypair_name => 'dicey1',
 	    :private_key => 'cert/dicey1.pem',
 	  },
@@ -41,8 +41,8 @@ Azure
 	  'azure' => {
 	    :mgmt_certificate => 'cert/azure.pem',
 	    :mgmt_endpoint => 'https://management.core.windows.net',
-	    :subscription_id => 'dbeb65ad-1dea-4528-ae5d-b1082da2f799',
-	    :storage_acct_name => 'portalvhds6qmhy1bc0fqn8',    
+	    :subscription_id => 'dbeb65dd-1dea-4528-ae5d-b1082da2f799',
+	    :storage_acct_name => 'portalvgds6qmhy1bc0fqn8',    
 	    :private_key => 'cert/azure.pem',
 	    :public_cert => 'cert/azure.cer',
 	  },
@@ -51,7 +51,7 @@ Azure
 Digital Ocean  
 
 	  'digital_ocean' => {
-	    :token => 'be83edcfb41fd19806ed7dc034b45e60942b65cdb2c8386540017f5c7c0c83a7',
+	    :token => 'be83edcfb41fd19806ed7dc034b45e60042b65cdb2c8386540017f5c7c0c83a7',
 	    :private_key => 'cert/digital_ocean',
 	    :ssh_key_name => 'Vagrant',
 	  },
@@ -60,7 +60,7 @@ Google (GCE)
 
 	  'google' => {
 	    :google_project_id => 'lucid-sol-713',
-	    :google_client_email  => '1011620534039-bk95sa499437crqm3qtid4e0nnhn6tos@developer.gserviceaccount.com',
+	    :google_client_email  => '1011630534039-bk95sa499437crqm3qtid4e0nnhn6tos@developer.gserviceaccount.com',
 	    :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
 	    :private_key => "cert/google_compute_engine",
 	  },
@@ -69,7 +69,7 @@ Rackspace
 
 	  'rackspace' => {
 	    :username => 'username',
-	    :api_key  => 'df7303cdceeb40d6a0aae3b6778e8759',
+	    :api_key  => 'df7303cdceeb41d6a0aae3b6778e8759',
 	    :keypair_name => 'id_rsa',
 	    :private_key => 'cert/id_rsa',
 	  },
@@ -87,22 +87,25 @@ The following section shows a view of the alignment between providers for the ch
 
 Images
 ------
-The following table represents the similar images among default configured providers.
+The following table represents the similar images among default configured providers.  This is an example of how we take a common iamge name of the left column and align them among providers.
 
 | Image   |  AWS  |  Azure      |  Digital Ocean  |  Google  |  Rackspace  |  Virtualbox
 |----------|:-------------:|------:|------:|----:|----:|----:  
 |CentOS-64-x64|ami-454b5e00|5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926|6.5 x64|centos-6-v20141021|CentOS 6.5 (PVHVM)|puppetlabs/centos-6.5-64-nocm (box)
-|CoreOS-444.5.0-(stable)|ami-856772c0|2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0||coreos-stable-444-5-0-v20141016|CoreOS (Stable)|494.5.0 (stable)|
+|CoreOS-stable|ami-856772c0|2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-509.1.0||coreos-stable-444-5-0-v20141016|CoreOS (Stable)|494.5.0 (stable)|
 
 
 Instances
 ----------------------
-The following table includes instance types or sizes that are deployed to the machines at each provider.
+The following table includes instance types or sizes that are deployed to the machines at each provider.  This is an example of taking a common instance type on the left column and align them against providers.
 
 | Instance Type   |  AWS  |  Azure      |  Digital Ocean  |  Google  |  Rackspace  |  Virtualbox
 |----------|:-------------:|------:|------:|----:|----:|----:  
-|small|t2.micro|Small|1gb|n1-standard-1|1 GB General Purpose v1|N/A
+|micro||||||
+|small||||||
 |medium|t2.medium|Medium|2gb|n1-standard-2|1 GB General Purpose v2|N/A
+|large||||||
+
 
 
 
@@ -111,8 +114,19 @@ Locations
 The following table represents the physical location choices among providers.  
 
 | Location   |  AWS  |  Azure      |  Digital Ocean  |  Google  |  Rackspace  |  Virtualbox
-|----------|:-------------:|------:|------:|----:|----:|----:  
-|us_west|us-west-1 (AZ us-west-1b)|West US|sfo1|us-central1-a|dfw|N/A
+|----------|:-------------:|:------:|:------:|:----:|:----:|:----:  
+|asia_east|yes|yes|yes|yes|yes|
+|aus_east|yes|yes|||yes|
+|europe_central|yes|||||
+|europe_east||||||
+|europe_north||yes||||
+|europe_west|yes|yes|yes|yes||
+|japan_west|yes|yes||||
+|sa_east|yes|||||
+|us_central||yes|||yes|
+|us_east|yes|yes|yes|yes|yes|
+|us_west|yes|yes|yes|||
+|uk_east|||yes|||
 
 
 <br><br>
@@ -148,7 +162,7 @@ VagrantSpicedir/
 
 Install
 -------
-VagrantSpice requires that providers are generally working with a normal Vagrantfile first.  The primary details here are specific to authenticaiton.  With this you can take the configuration parameters and populate them in the spice-conf/consumer_config.rb file along with populating relavant certificate files in the provider/cert directory.
+VagrantSpice requires that providers are generally working with a normal Vagrantfile first.  The primary details here are specific to authentication.  With this you can take the configuration parameters and populate them in the spice-conf/consumer_config.rb file along with populating relavant certificate files in the provider/cert directory.
 
 
 	git clone https://github.com/emccode/vagrantspice
@@ -187,7 +201,7 @@ Usage
 By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically creating proper Vagrantfile parameters that allow Vagrant to create machines as normal.
 
 	cd VagrantSpicedir/
-	curl https://discovery.etcd.io/new
+	curl -s https://discovery.etcd.io/new | more
 	vi spice-conf/consumer_config.rb
 	- find :etcd_url and replace the URL
 	cd provider1
@@ -198,203 +212,60 @@ By enetering a provider directory and issuing a standard 'vagrant up' command, V
 	
 If you choose a single vm name, you must also specify the ```--provider=name``` flag.
 
-
-Example provider-config.rb
----------------------------
-	  {
-	  'google' => {
-	    :requires => "
-	      require 'vagrant-google'
-	      require 'vagrant-hostmanager'
-	      require 'fog/version'
-	    ",
-	    :use_bucket => true,
-	    :sync_folder => "
-	      deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
-	    ",
-	    :box => 'gce',
-	    :defaults => {
-	      :common_location_name => 'us_west',
-	      :common_image_name => 'CentOS-6.5-x64',
-	      :common_instance_type => 'small',
-	    },
-	    :ip_resolver => $ip_resolver[:ssh_ip],
-	    :instances_config => {
-	      'puppetmaster' => {
-	        :common_instance_type => 'small',
-	        :common_image_name => 'CentOS-6.5-x64',
-	        :config_steps_type => 'default_linux',
-	        #:object_source => 'google_storage',
-	        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
-	        :sync_folder => "
-	          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
-	          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
-	        ",
-	        :object_creds => {
-	          :service_account => $consumer_config['google_storage'][:service_account],
-	          :key_file => $consumer_config['google_storage'][:key_file],
-	        },
-	        :commands => {
-	          :dns_update => $images_config['default_linux'][:dns_update],
-	          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
-	          :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-	          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-	          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
-	        }
-	      },
-	      'puppetagent' => {
-	        :common_instance_type => 'medium',
-	        :common_image_name => 'CentOS-6.5-x64',
-	        :config_steps_type => 'default_linux',
-	        #:disk_size => 110,
-	        :commands => {
-	          :dns_update => $images_config['default_linux'][:dns_update],
-	          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
-	          :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-	          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-	        }        
-	      },
-	      'coreos' => {
-	        :common_instance_type => 'small',
-	        :common_image_name => 'CoreOS-444.5.0-(stable)',
-	        :config_steps_type => 'default_coreos',
-	        :commands => {
-	          :pre_install => '',
-	          :install => proc {|config_param|  },
-	          :post_install => proc {|config_param| " 
-	public_ipv4=`curl -s ip.alt.io`
-
-	cat <<EOF > /usr/share/oem/cloud-config.yml
-	#cloud-config
-
-	coreos:
-	  etcd:
-	    discovery: #{config_param[:etcd_url]}
-	    addr: $public_ipv4:4001
-	    peer-addr: $public_ipv4:7001
-	    peer-election-timeout: 500
-	    peer-heartbeat-interval: 100
-	  fleet:
-	    public-ip: $public_ipv4
-	    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
-	  units:
-	      - name: etcd.service
-	        command: start
-	      - name: fleet.service
-	        command: start
-	EOF
-	        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
-	"
-	        } }        
-	      },
-	    },
-	    :deploy_box_config => "
-	      deploy_config.vm.provider :google do |google, override|
-	        google.google_project_id = $consumer_config[$provider][:google_project_id]
-	        google.google_client_email = $consumer_config[$provider][:google_client_email]
-	        google.google_key_location = $consumer_config[$provider][:google_key_location]
-	        google.image = instance_image
-	        eval(str_instance_type)
-	        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
-	        google.disk_size = disk_size unless !disk_size
-
-
-	        eval(str_location)
-	        google.name = box[:hostname]
-	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
-	        override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
-	      end
-	    ",
-	    :images_config => {
-	      'centos-6-v20141021' => {
-	        :ssh_username => 'clintonkitson'
-	      },
-	      'coreos-stable-444-5-0-v20141016' => {
-	        :ssh_username => 'core'
-	      }
-	    },
-	    :images_lookup => {
-	      'CentOS-6.5-x64' => 'centos-6-v20141021',
-	      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
-	    },
-	    :instance_type_lookup => {
-	      'small' => {
-	        :name => "google.machine_type = 'n1-standard-1'",
-	        :type => :alias,
-	      },
-	      'medium' => {
-	        :name => "google.machine_type  = 'n1-standard-2'",
-	        :type => :alias,
-	      },
-	    },
-	    :location_lookup => {
-	      'us_west' => "
-	        google.zone = 'us-central1-a'
-	      "
-	    },
-	  },
-	}
-	  
-:deploy\_box\_config
-------------------
-The :deploy\_box\_config key contains a value that resembles the default configuration parameters that are typically in the Vagrantfile specific to the provider.  Notice how the parameters are filled in with variables that reference multiple locations to possible find the values.
- 
-	    :deploy_box_config => "
-	      deploy_config.vm.provider :google do |google, override|
-	        google.google_project_id = $consumer_config[$provider][:google_project_id]
-	        google.google_client_email = $consumer_config[$provider][:google_client_email]
-	        google.google_key_location = $consumer_config[$provider][:google_key_location]
-	        google.image = instance_image
-	        eval(str_instance_type)
-	        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
-	        google.disk_size = disk_size unless !disk_size
-
-
-	        eval(str_location)
-	        google.name = box[:hostname]
-	        override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
-	        override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
-	      end
-	    ",
-
-
 :instance\_type\_lookup
 -----------------------
 This is a peak at the abstraction for the instance type.  Here you can see a call to small refers to the ```google.machine_type``` parameter and ```n1-standard-1```.
 
-	    :instance_type_lookup => {
-	      'small' => {
-	        :name => "google.machine_type = 'n1-standard-1'",
-	        :type => :alias,
-	      },
-	      'medium' => {
-	        :name => "google.machine_type  = 'n1-standard-2'",
-	        :type => :alias,
-	      },
-	    },
+	 :instance_type_lookup => {
+      'us_central' => {
+        'micro' => {
+          :name => "google.machine_type = 'f1-micro'",
+          :type => :alias,
+        },
+        'small' => {
+          :name => "google.machine_type = 'n1-standard-1'",
+          :type => :alias,
+        },
+        'medium' => {
+          :name => "google.machine_type  = 'n1-standard-2'",
+          :type => :alias,
+        },
+        'large' => {
+          :name => "google.machine_type  = 'n1-standard-8'",
+          :type => :alias,
+        },
+      },
 
 
 :images\_lookup
 --------------
 This corresponds to generic names such as ```CoreOS-444.5.0-(stable)``` and referring to the actual image name of ```coreos-stable-444-5-0-v20141016``` at Google.
 
-	    :images_lookup => {
-	      'CentOS-6.5-x64' => 'centos-6-v20141021',
-	      'CoreOS-444.5.0-(stable)' => 'coreos-stable-444-5-0-v20141016',
-	    },
+	  'us_central' => {
+	        'CentOS-6.5-x64' => 'centos-6-v20141021',
+	        'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
+	        'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
+	        'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+	      },
 	    
 :images\_config
 --------------
 Here we specify the image name at the provider followed by which ssh username must be used for that image.  In the case of the CentOS image, the name on the certificate supplied is used.  But in the case of CoreOS the default ```core``` username is used.
 
-	    :images_config => {
-	      'centos-6-v20141021' => {
-	        :ssh_username => 'clintonkitson'
-	      },
-	      'coreos-stable-444-5-0-v20141016' => {
-	        :ssh_username => 'core'
-	      }
-	    },
+    :images_config => {
+      'centos-6-v20141021' => {
+        :ssh_username => 'clintonkitson'
+      },
+      'coreos-stable-494-5-0-v20141215' => {
+        :ssh_username => 'core'
+      },
+      'coreos-beta-522-3-0-v20141226' => {
+        :ssh_username => 'core'
+      },
+      'coreos-alpha-549-0-0-v20150102' => {
+        :ssh_username => 'core'
+      }
+    },
 
 :instances\_config
 -----------------
@@ -402,16 +273,14 @@ This area allows us to configure the custom ```cloud-config``` file.  As part of
 
 Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  This does a ```whoami``` request to ```ip.alt.io``` which returns the IP that the machine is known as publicly.  This is what we use as the public address.
 
-  
-
-	'coreos' => {
+	       'coreos' => {
 	        :common_instance_type => 'small',
-	        :common_image_name => 'CoreOS-444.5.0-(stable)',
+	        :common_image_name => 'CoreOS-stable',
 	        :config_steps_type => 'default_coreos',
 	        :commands => {
 	          :pre_install => '',
 	          :install => proc {|config_param|  },
-	          :post_install => proc {|config_param| " 
+	          :post_install => proc {|config_param,box_param| " 
 	public_ipv4=`curl -s ip.alt.io`
 
 	cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -422,11 +291,11 @@ Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  T
 	    discovery: #{config_param[:etcd_url]}
 	    addr: $public_ipv4:4001
 	    peer-addr: $public_ipv4:7001
-	    peer-election-timeout: 500
-	    peer-heartbeat-interval: 100
+	    peer-election-timeout: 7500
+	    peer-heartbeat-interval: 1500
 	  fleet:
 	    public-ip: $public_ipv4
-	    metadata: region=us_west,provider=google,platform=cloud,instance_type=small
+	    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
 	  units:
 	      - name: etcd.service
 	        command: start
@@ -437,7 +306,7 @@ Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  T
 	"
 	        } }        
 	      },
-
+	    },
 
 Other defaults
 --------------

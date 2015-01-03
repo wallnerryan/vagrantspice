@@ -27,7 +27,7 @@
   ],
   :boxes_type => 'coreos',
   :config_param => '{
-      :etcd_url => "https://discovery.etcd.io/6c13141ccd2ffd80bc0ab0e752af3e27",
+      :etcd_url => "https://discovery.etcd.io/bae06c1b688e7e9d6216f92bb5805691",
     }',
 }
 

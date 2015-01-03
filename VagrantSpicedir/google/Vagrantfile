@@ -1,7 +1,6 @@
 
 require 'resolv'
 
-
 config_files = [
   '../spice-conf/consumer_config.rb',
   '../spice-conf/ip_resolver.rb',

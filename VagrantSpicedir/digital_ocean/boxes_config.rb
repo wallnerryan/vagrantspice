@@ -33,7 +33,7 @@
   ],
   :boxes_type => 'coreos',
   :config_param => '{
-      :etcd_url => "https://discovery.etcd.io/d03f9a7093910a7f3cddcbec0857590c",
+      :etcd_url => "https://discovery.etcd.io/56960ade2f50cd06d89284657f87c0db",
     }',
 }
 

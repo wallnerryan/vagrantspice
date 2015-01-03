@@ -33,26 +33,26 @@
     { 
       :hostname  =>  'aws-coreos06',
       :common_location_name => 'europe_central',
-      :common_instance_type => 'micro',
+      :common_instance_type => 'large',
       :common_image_name => 'CoreOS-beta',
     },
     { 
       :hostname  =>  'aws-coreos07',
       :common_location_name => 'japan_west',
-      :common_instance_type => 'micro',
+      :common_instance_type => 'medium',
       :common_image_name => 'CoreOS-beta',
     },
     { 
       :hostname  =>  'aws-coreos08',
       :common_location_name => 'sa_east',
-      :common_instance_type => 'micro',
+      :common_instance_type => 'small',
       :common_image_name => 'CoreOS-beta',
     },
 
   ],
   :boxes_type => 'coreos',
   :config_param => '{
-      :etcd_url => "https://discovery.etcd.io/eea4825e4e554c3cf430d43c3c19dde5",
+      :etcd_url => "https://discovery.etcd.io/18179f2ce7a9bddc11463ff157907af8",
     }',
 }
 

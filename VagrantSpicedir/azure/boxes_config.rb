@@ -8,42 +8,36 @@
     },
     { 
       :hostname  =>  'azure-coreos02',
-      :common_location_name => 'aus_east',
-      :common_instance_type => 'small',
-      :common_image_name => 'CoreOS-beta'
-    },
-    { 
-      :hostname  =>  'azure-coreos03',
       :common_location_name => 'europe_north',
       :common_instance_type => 'medium',
       :common_image_name => 'CoreOS-alpha',
     },
     { 
-      :hostname  =>  'azure-coreos04',
+      :hostname  =>  'azure-coreos03',
       :common_location_name => 'europe_west',
       :common_instance_type => 'large',
       :common_image_name => 'CoreOS-alpha',
     },
     { 
-      :hostname  =>  'azure-coreos05',
+      :hostname  =>  'azure-coreos04',
       :common_location_name => 'japan_west',
       :common_instance_type => 'micro',
       :common_image_name => 'CoreOS-alpha',
     },
     { 
-      :hostname  =>  'azure-coreos06',
+      :hostname  =>  'azure-coreos05',
       :common_location_name => 'us_central',
       :common_instance_type => 'micro',
       :common_image_name => 'CoreOS-alpha',
     },
     { 
-      :hostname  =>  'azure-coreos07',
+      :hostname  =>  'azure-coreos06',
       :common_location_name => 'us_west',
       :common_instance_type => 'micro',
       :common_image_name => 'CoreOS-alpha',
     },
     { 
-      :hostname  =>  'azure-coreos08',
+      :hostname  =>  'azure-coreos07',
       :common_location_name => 'us_east',
       :common_instance_type => 'micro',
       :common_image_name => 'CoreOS-alpha',
@@ -52,7 +46,7 @@
   ],
   :boxes_type => 'coreos',
   :config_param => '{
-      :etcd_url => "https://discovery.etcd.io/6c13141ccd2ffd80bc0ab0e752af3e27",
+      :etcd_url => "https://discovery.etcd.io/da081f65e1545511a78aebdd35ea1cf1",
     }',
 }
 
