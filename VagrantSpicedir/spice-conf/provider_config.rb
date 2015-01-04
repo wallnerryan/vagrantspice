@@ -1111,6 +1111,8 @@ EOF
 
         eval($provider_config[$provider][:firewall])
 
+        eval(str_location)
+
         aws.block_device_mapping = box[:block_device_mapping] || boxes_config[:block_device_mapping] || $provider_config[$provider][:instances_config][box_type][:block_device_mapping] || []
 
         aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
