@@ -4,16 +4,14 @@ The purpose of VagrantSpice is to simplify and standardize how the different mac
 
 The primary example in the current version is getting a CoreOS Fleet cluster up and running across Amazon AWS, Azure, Digital Ocean, Google, and Rackspace.  The current repository has 27 Data centers among these providers working with CoreOS images.
 
-If you take a peak at the VagrantspiceDir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
+If you take a peak at the VagrantSpicedir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
 
 Summary
 -------
 
-Each provider maintains its own configuration parameters.  Some of these parameters are unique per provider but others are more generally applicable.  In addition, different providers have different default behavior for VM templates, network connectivity, storage and other configurable items.  By abstracting above the Vagrantfile, VagrantSpice allows a single configuration of boxes to work across any pre-configured provider.  It can be as easy as specifying a hostname and everything else just works regardless of which cloud.
+Each provider maintains its own configuration parameters.  Some of these parameters are unique per provider but others are more generally applicable.  In addition, different providers have different default behavior for VM templates, network connectivity, firewalls, storage and other configurable items.  By abstracting above the Vagrantfile, VagrantSpice allows a single configuration of boxes to work across any pre-configured provider.  It can be as easy as specifying a hostname and everything else just works regardless of which cloud.
 
 This simplification requires a level of abstraction for commonality to occur.  This can limit the capabilities of certain cloud providers to only common aspects among other providers.  This is a natural by-product of making cloud provider capabilities align, but there is still the option to leverage custom provider options as well.
-
-Different public cloud providers leverage different networking capabilities.  Some assign public IPs directly to interfaces of the machine, while others leverage NAT and private IP spaces.  In addition, some provide intra-VM communication between machines while others only allow communication through public IP addresses.  VagrantSpice has many options here, but the default is to allow communication between VMs using the public internet routable IP address to maintain cloud interoperability.
 
 <br>
 
@@ -25,7 +23,7 @@ VagrantSpice is currently in early proof of concept strages on its third version
 
 Configured Machine Providers
 -----------------
-The following providers have been configured already within VagrantSpice.  If there is a provider that is not listed, the provider_config.rb and consumer_config.rb files must be updated with relevant normalizing information.  The following represents relevant authentication parameters in the consumer_config.rb file.
+The following providers have been configured already within VagrantSpice.  If there is a provider that is not listed, the provider_config.rb and consumer_config.rb files must be updated with relevant normalizing information.  The following represents relevant authentication parameters in the consumer_config.rb file.  The parameters are required only if you are leveraging the specific provider.
 
 AWS
 
@@ -74,9 +72,6 @@ Rackspace
 	    :private_key => 'cert/id_rsa',
 	  },
   
-Virtual Box  
-
-	N/A
 
 <br><br>
 <hr>
@@ -173,34 +168,73 @@ VagrantSpice requires that providers are generally working with a normal Vagrant
 	mkdir provider/cert
 	cp yourcertdir/cert provider/cert/.
 
-Networking
+Firewall
 ----------
-Different providers deal with networking in different ways.  Most providers have default firewall settings in place to protect intra-vm communication.  In order to get a default multi-machine setup working, you likely need to enable firewall setings to allow communication inbound to the VM.  This is something that should be tested with the native Vagrant provider before using VagrantSpice.  
+Providers handle firewalls differently.  Some do not employ any firewall services while others have extensive capabilities.  The provider layer we are working with at VagrantSpice is based on Vagrant machine cloud provider plugins.  These plugins all receive the configuration or non-configuration of firewall settings differently.
+
+There are three methods.  The *group* method allows you to specify the actual groups of firewall rules to apply.  The *rules* method allows you to specify firewall rules dynamically.  The *pre-existing* method assumes you pre-create firewall rules that are applied to all VMs that are brought up under a project or group and does not require configuration from VagrantSpice.  And *N/A* means the provider does not employ firewall services.
+
+| Provider   |  Method  |
+|:----------:|:--------:|
+|AWS|Group|
+|Azure|Rules|
+|Digital Ocean|N/A|
+|Google|Pre-Existing|
+|Rackspace|Pre-Existing|
+
 
 For the CoreOS demo, at a minimum ```TCP 4001 and 7001``` need to be open to allow proper ```etcd``` communications.  As well, ```TCP 22``` must be open for ```SSH```.
 
+#### Azure Example - boxes_config.rb
+> :firewall => "4001:4001,7001:7001"
+
+#### AWS Example - boxes_config.rb
+> :firewall => "['default','standard']"
 
 Machine Customization
 -------------
-The boxes_config.rb file specifies the names of the machines and the types.  There are a range of possibities as far as where to declare the different variables.  More detail to come later, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` is very rough currently, but can provide insight to priority and ordering.
+The boxes_config.rb file specifies at a minimum the names of the machines.  There are a range of possibities other than this and chances to set these extra parameters at a more global level.  More detail to come later, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` can provide insight to logic, priority and ordering.
 
 	{
 	  :boxes => [
 	    { 
 	      :hostname  =>  'google-coreos01',
+	      :common_location_name => 'us_central',
+	      :common_instance_type => 'micro',
+	      :common_image_name => 'CoreOS-stable',
 	    },
 	    { 
 	      :hostname  =>  'google-coreos02',
+	      :common_location_name => 'europe_west',
+	      :common_instance_type => 'medium',
+	      :common_image_name => 'CoreOS-beta'
+	    },
+	    { 
+	      :hostname  =>  'google-coreos03',
+	      :common_location_name => 'asia_east',
+	      :common_instance_type => 'large',
+	      :common_image_name => 'CoreOS-alpha',
 	    },
 	  ],
 	  :boxes_type => 'coreos',
+	  :config_param => '{
+	      :etcd_url => "https://discovery.etcd.io/33b91d0a7877a694de893efe48f68a10",
+	    }',
 	}
+
+
 
 
 
 Usage
 -------
-By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically creating proper Vagrantfile parameters that allow Vagrant to create machines as normal.
+By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically creating proper Vagrantfile parameters that allow Vagrant to create machines as normal.  
+
+Prior to this ensure that
+- Vagrant is installed
+- Vagrant plugins are installed (vagrant plugin install vagrant-aws) or updated (vagrant plugin update)
+
+Use these basic steps to run VagrantSpice with the CoreOS demo.
 
 	cd VagrantSpicedir/
 	curl -s https://discovery.etcd.io/new | more
@@ -361,6 +395,11 @@ For those interested, here is what is left of a Vagrantfile in a provider direct
 	ENV['VAGRANT_DEFAULT_PROVIDER'] = $provider
 
 	eval(File.read('../spice-conf/Vagrantfile-template.rb'))
+
+
+Networking
+----------
+Different public cloud providers also leverage different networking capabilities.  Some assign public IPs directly to interfaces of the machine, while others leverage NAT and private IP spaces.  In addition, some provide intra-VM communication between machines while others only allow communication through public IP addresses.  VagrantSpice has many options here, but the default is to allow communication between VMs using the public internet routable IP address to maintain cloud interoperability.
 
 
 Image Names from Providers

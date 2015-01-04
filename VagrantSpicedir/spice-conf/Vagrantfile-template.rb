@@ -34,6 +34,8 @@ Vagrant.configure("2") do |config|
     location = box[:common_location_name] || $provider_config[$provider][:instances_config][box_type][:common_location_name] || $provider_config[$provider][:defaults][:common_location_name]
     str_location = $provider_config[$provider][:location_lookup][location] if $provider_config[$provider][:location_lookup]
 
+    str_firewall = box[:firewall] || boxes_config[:firewall] || $provider_config[$provider][:instances_config][box_type][:firewall] || $provider_config[$provider][:defaults][:firewall]
+
     instance_image = $provider_config[$provider][:images_lookup][location][common_image_name]
 
     common_instance_type = box[:common_instance_type] || $provider_config[$provider][:instances_config][box_type][:common_instance_type] || $provider_config[$provider][:defaults][:common_instance_type]

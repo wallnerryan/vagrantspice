@@ -456,12 +456,13 @@ EOF
         eval(str_instance_type)
         azure.vm_user = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
 
+        eval($provider_config[$provider][:firewall])
+
         azure.vm_name = box[:hostname]
         eval(str_location)
         azure.ssh_private_key_file = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         azure.ssh_certificate_file = box[:public_cert] || $provider_config[$provider][:instances_config][box_type][:public_cert] || $consumer_config[$provider][:private_key]
         azure.ssh_port = box[:ssh_port] || $provider_config[$provider][:instances_config][box_type][:ssh_port]
-        azure.tcp_endpoints = box[:firewall_settings] || $provider_config[$provider][:instances_config][box_type][:firewall_settings] || $instances_config[box_type][:firewall_settings]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
       end
       config.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
@@ -496,7 +497,6 @@ EOF
         :common_instance_type => 'small',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
-        :firewall_settings => '4001:4001,7001:7001',
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
@@ -774,8 +774,8 @@ EOF
         azure.vm_location = 'East US'
         azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}eastus'
       ",
-
     }, 
+    :firewall => 'azure.tcp_endpoints = str_firewall',
   },
   'digital_ocean' => {  
     :requires => "
@@ -1038,7 +1038,7 @@ EOF
       :common_location_name => 'us_west',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
-      :security_groups => ['default','standard']
+      :security_groups => ['default']
     },
     :ip_resolver => $ip_resolver[:ifconfig].call('eth0'),
     :instances_config => {
@@ -1105,11 +1105,10 @@ EOF
         aws.ami = instance_image
         eval(str_instance_type)
         aws.tags['Name'] = box[:hostname]
-        aws.security_groups = box[:security_groups] || $provider_config[$provider][:instances_config][box_type][:security_groups] || $provider_config[$provider][:defaults][:security_groups] || []
-        
-        eval(str_location)
 
-        aws.block_device_mapping = box[:block_device_mapping] || $provider_config[$provider][:instances_config][box_type][:block_device_mapping] || []
+        eval($provider_config[$provider][:firewall])
+
+        aws.block_device_mapping = box[:block_device_mapping] || boxes_config[:block_device_mapping] || $provider_config[$provider][:instances_config][box_type][:block_device_mapping] || []
 
         aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
@@ -1432,6 +1431,7 @@ EOF
         aws.availability_zone = 'sa-east-1a'
       ",
     },
+    :firewall => 'aws.security_groups = eval(str_firewall) || []',
   },
   'virtualbox' => {
     :requires => "
