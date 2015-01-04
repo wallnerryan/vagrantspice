@@ -56,5 +56,51 @@
     }',
   :firewall => "['default','standard']",
   :storage => "[{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }]",
+  :config_steps => proc {|config_param,box_param| " 
+public_ipv4=`curl -s ip.alt.io`
+
+cat <<EOF > /usr/share/oem/cloud-config.yml
+#cloud-config
+
+coreos:
+  etcd:
+    discovery: #{config_param[:etcd_url]}
+    addr: $public_ipv4:4001
+    peer-addr: $public_ipv4:7001
+    peer-election-timeout: 7500
+    peer-heartbeat-interval: 1500
+  fleet:
+    public-ip: $public_ipv4
+    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
+  units:
+      - name: etcd.service
+        command: start
+      - name: fleet.service
+        command: start
+      - name: format-ephemeral.service
+        command: start
+        content: |
+          [Unit]
+          Description=Formats the ephemeral drive
+          [Service]
+          Type=oneshot
+          RemainAfterExit=yes
+          ExecStart=/usr/sbin/wipefs -f /dev/xvdb
+          ExecStart=/usr/sbin/mkfs.btrfs -L root -f /dev/xvdb
+      - name: var-lib-docker.mount
+        command: start
+        content: |
+          [Unit]
+          Description=Mount ephemeral to /var/lib/docker
+          Requires=format-ephemeral.service
+          After=format-ephemeral.service
+          Before=docker.service
+          [Mount]
+          What=/dev/xvdb
+          Where=/var/lib/docker
+          Type=btrfs
+EOF
+          /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml"
+          },
 }
 

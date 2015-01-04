@@ -79,7 +79,9 @@ Vagrant.configure("2") do |config|
         :fqdn => fqdn,
       }
 
-      bootstrap_script = $config_steps[config_steps_type].call(box_type,config_param,box_param)
+      bootstrap_script = if box[:config_steps] then box[:config_steps].call(config_param,box_param) end || \
+       if boxes_config[:config_steps] then boxes_config[:config_steps].call(config_param,box_param) end || \
+       $config_steps[config_steps_type].call(box_type,config_param,box_param)
       deploy_config.vm.provision :shell, :inline => bootstrap_script
     end
   end

@@ -1116,7 +1116,7 @@ EOF
 
         eval(str_location)
 
-        eval($provider_config[$provider][:storage])       
+        eval($provider_config[$provider][:storage])
 
         aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
@@ -1439,8 +1439,8 @@ EOF
         aws.availability_zone = 'sa-east-1a'
       ",
     },
-    :firewall => 'aws.security_groups = eval(str_firewall) || []',
-    :storage => 'aws.block_device_mapping = eval(str_storage) || []',
+    :firewall => 'aws.security_groups = (eval(str_firewall) unless !str_firewall) || []',
+    :storage => 'aws.block_device_mapping = (eval(str_storage) unless !str_storage) || []',
   },
   'virtualbox' => {
     :requires => "

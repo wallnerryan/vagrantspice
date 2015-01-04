@@ -32,7 +32,7 @@
   },
   'google' => {
     :google_project_id => 'lucid-sol-713',
-    :google_client_email  => 'abc@developer.gserviceaccount.com',
+    :google_client_email  => 'add@developer.gserviceaccount.com',
     :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
     :private_key => "cert/google_compute_engine",
   },
