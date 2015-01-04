@@ -96,15 +96,19 @@ If you choose a single vm name, you must also specify the ```--provider=name``` 
 
 
 # <A name="Examples">Examples</a>
+See the ```spice-examples``` directory of ```boxes_config.rb``` files.
+
 - CoreOS (stable, beta, alpha)
+- CoreOS with Firewalls
+- CoreOS additional configuration using ```cloud-config```
 - CoreOS with Fleet
-- CoreOS with Storage and Firewalls
+- CoreOS with Fleet, and Additional Storage
 - CoreOS with Snake Charmer
 
 
 # <A name="Configuration">Configuration</a>
 
-<A name=""></a>Consumer Configuration
+<A name="consumer_configuration">Consumer Configuration</a>
 -----------------
 The following providers have been configured already within VagrantSpice.  If there is a provider that is not listed, the ```provider\_config.rb``` and ```consumer\_config.rb``` files must be updated with relevant normalizing information.  The following represents relevant authentication parameters in the ```consumer\_config.rb``` file.  The parameters are required only if you are leveraging the specific provider.
 
@@ -203,17 +207,18 @@ Storage can be considered another configuration parameter that differes between 
 |Google|Yes|Yes|Yes|
 |Rackspace|Yes|No|No|
 
-Once storage is provisioned it must be consumed by the guest file system.  For CoreOS this can be done via a cloud config file.
+Once storage is provisioned it must be consumed by the guest file system.  For CoreOS this can be done via a cloud config file.  
 
 #### AWS Examples - boxes_config.rb
 > :storage => "[{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }]",
 
 #### Google Example - boxes_config.rb
+This storage does not need to be configured inside the guest since it represents the additional ```/``` partition size.
 > :storage => '100'
 
 
 
-<A name="">Machine Customization</a>
+<A name="machine_customization">Machine Customization</a>
 -------------
 The boxes_config.rb file specifies at a minimum the names of the machines.  There are a range of possibities other than this and chances to set these extra parameters at a more global level.  More detail to come later, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` can provide insight to logic, priority and ordering.
 
