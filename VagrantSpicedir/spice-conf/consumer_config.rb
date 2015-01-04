@@ -2,8 +2,9 @@
   'azure' => {
     :mgmt_certificate => 'cert/azure.pem',
     :mgmt_endpoint => 'https://management.core.windows.net',
-    :subscription_id => 'ce5684a8-xxxx-xxxx-xxxx-xxxxxxxxxxx',
-    :storage_acct_name_prefix => 'ce5684a8',
+    :subscription_id => 'ce5684a8-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    :storage_acct_name => 'portalvhds6qmhy1bc0fqn9',
+    :storage_acct_name_prefix => 'ce5684a8',  
     :private_key => 'cert/azure.pem',
     :public_cert => 'cert/azure.cer',
   },
@@ -12,8 +13,8 @@
     :storage_account => '',
   },
   'aws' => {
-    :access_key_id => '',
-    :secret_access_key => '',
+    :access_key_id => 'AK',
+    :secret_access_key => 'j+',
     :keypair_name => 'id_rsa',
     :private_key => 'cert/id_rsa.pem',
   },
@@ -30,8 +31,8 @@
     :ssh_key_name => 'Vagrant',
   },
   'google' => {
-    :google_project_id => 'lucid-sol-711',
-    :google_client_email  => 'blah@developer.gserviceaccount.com',
+    :google_project_id => 'lucid-sol-713',
+    :google_client_email  => 'abc@developer.gserviceaccount.com',
     :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
     :private_key => "cert/google_compute_engine",
   },

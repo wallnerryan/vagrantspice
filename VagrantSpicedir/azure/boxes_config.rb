@@ -48,6 +48,6 @@
   :config_param => '{
       :etcd_url => "https://discovery.etcd.io/da081f65e1545511a78aebdd35ea1cf1",
     }',
-  :firewall => "4001:4001,7001:7001"
+  :firewall => '4001:4001,7001:7001',
 }
 

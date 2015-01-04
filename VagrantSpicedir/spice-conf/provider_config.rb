@@ -94,8 +94,8 @@ EOF
         google.google_key_location = $consumer_config[$provider][:google_key_location]
         google.image = instance_image
         eval(str_instance_type)
-        disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
-        google.disk_size = disk_size unless !disk_size
+
+        eval($provider_config[$provider][:storage])
 
         eval($provider_config[$provider][:firewall])
 
@@ -207,6 +207,9 @@ EOF
       ",
     },
     :firewall => 'google.network = str_firewall',
+    :storage => '
+      google.disk_size = str_storage unless !str_storage
+      ',
   },
   'rackspace' => {
     :requires => "
@@ -1113,7 +1116,7 @@ EOF
 
         eval(str_location)
 
-        aws.block_device_mapping = box[:block_device_mapping] || boxes_config[:block_device_mapping] || $provider_config[$provider][:instances_config][box_type][:block_device_mapping] || []
+        eval($provider_config[$provider][:storage])       
 
         aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
@@ -1437,6 +1440,7 @@ EOF
       ",
     },
     :firewall => 'aws.security_groups = eval(str_firewall) || []',
+    :storage => 'aws.block_device_mapping = eval(str_storage) || []',
   },
   'virtualbox' => {
     :requires => "

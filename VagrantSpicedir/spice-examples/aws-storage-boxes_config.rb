@@ -55,4 +55,6 @@
       :etcd_url => "https://discovery.etcd.io/18179f2ce7a9bddc11463ff157907af8",
     }',
   :firewall => "['default','standard']",
+  :storage => "[{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }]",
+}
 

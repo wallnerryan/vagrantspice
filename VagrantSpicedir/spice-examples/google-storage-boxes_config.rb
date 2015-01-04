@@ -24,5 +24,6 @@
       :etcd_url => "https://discovery.etcd.io/33b91d0a7877a694de893efe48f68a10",
     }',
   :firewall => 'default',
+  :storage => "100",
 }
 
