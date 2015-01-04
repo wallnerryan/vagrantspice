@@ -179,7 +179,7 @@ There are three methods.  The *group* method allows you to specify the actual gr
 |AWS|Group|
 |Azure|Rules|
 |Digital Ocean|N/A|
-|Google|Pre-Existing|
+|Google|Group|
 |Rackspace|Pre-Existing|
 
 
@@ -190,6 +190,9 @@ For the CoreOS demo, at a minimum ```TCP 4001 and 7001``` need to be open to all
 
 #### AWS Example - boxes_config.rb
 > :firewall => "['default','standard']"
+
+#### Google Example - boxes_config.rb
+> :firewall => "default"
 
 Machine Customization
 -------------

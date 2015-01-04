@@ -15,6 +15,7 @@
       :common_location_name => 'us_west',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
+      :firewall => 'default'
     },
     :ip_resolver => $ip_resolver[:ssh_ip],
     :instances_config => {
@@ -96,6 +97,7 @@ EOF
         disk_size = box[:disk_size] || $provider_config[$provider][:instances_config][box_type][:disk_size] 
         google.disk_size = disk_size unless !disk_size
 
+        eval($provider_config[$provider][:firewall])
 
         eval(str_location)
         google.name = box[:hostname]
@@ -204,6 +206,7 @@ EOF
         google.zone = 'asia-east1-a'
       ",
     },
+    :firewall => 'google.network = str_firewall',
   },
   'rackspace' => {
     :requires => "
