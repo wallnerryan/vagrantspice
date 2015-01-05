@@ -457,7 +457,7 @@ This storage does not need to be configured inside the guest since it represents
 
 <A name="machine_customization">Machine Customization</a>
 -------------
-The boxes_config.rb file specifies at a minimum the names of the machines.  There are a range of possibities other than this and chances to set these extra parameters at a more global level.  More detail to come later, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` can provide insight to logic, priority and ordering.
+The boxes_config.rb file specifies at a minimum the names of the machines.  There are a range of possibities other than this and chances to set these extra parameters at a more global level.  More detail in the examples sections, but in general you can specify settings at the Box, Boxes, Instances, Instance Types, Consumer, and Provider levels.  The ```Vagrantfile-template.rb``` can provide insight to logic, priority and ordering.
 
 	{
 	  :boxes => [
@@ -480,7 +480,7 @@ The boxes_config.rb file specifies at a minimum the names of the machines.  Ther
 	      :common_image_name => 'CoreOS-alpha',
 	    },
 	  ],
-	  :boxes_type => 'coreos',
+	  :boxes_type => 'coreos-fleet',
 	  :config_param => '{
 	      :etcd_url => "https://discovery.etcd.io/33b91d0a7877a694de893efe48f68a10",
 	    }',

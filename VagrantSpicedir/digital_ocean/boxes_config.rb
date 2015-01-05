@@ -31,7 +31,7 @@
       :common_image_name => 'CoreOS-alpha',
     },
   ],
-  :boxes_type => 'coreos',
+  :boxes_type => 'coreos-fleet',
   :config_param => '{
       :etcd_url => "https://discovery.etcd.io/56960ade2f50cd06d89284657f87c0db",
     }',

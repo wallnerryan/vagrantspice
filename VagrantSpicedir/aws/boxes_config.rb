@@ -50,7 +50,7 @@
     },
 
   ],
-  :boxes_type => 'coreos',
+  :boxes_type => 'coreos-fleet',
   :config_param => '{
       :etcd_url => "https://discovery.etcd.io/18179f2ce7a9bddc11463ff157907af8",
     }',
