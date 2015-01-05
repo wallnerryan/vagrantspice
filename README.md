@@ -72,13 +72,16 @@ VagrantSpice requires that providers are generally working with a normal Vagrant
 
 
 # <A name="Usage">Usage</a>
-By enetering a provider directory and issuing a standard 'vagrant up' command, VagrantSpice will assist in dynamically feeding Vagrant DSL to allow Vagrant to create machines as normal.  
+Enter a provider directory and issue a standard ```vagrant up``` command. VagrantSpice will then assist in dynamically feeding Vagrant DSL to allow Vagrant to create machines as normal.  
 
 Prior to this ensure that
 - Vagrant is installed
 - Vagrant plugins are installed (vagrant plugin install vagrant-aws) or updated (vagrant plugin update)
+- Required items are available (key pairs, SSH keys, firewalls/networks, etc) and possibly at **each region**.  Naming key pairs and firewall/networking groups identically between regions will simplify configuration.
 
-Use these steps for general VagrantSpice.
+
+
+Use these steps for general VagrantSpice.  You might want to edit the ```provider/boxes_config.rb``` file to limit the amount of machines deployed.
 
 	cd VagrantSpicedir/
 	vi spice-conf/consumer_config.rb
