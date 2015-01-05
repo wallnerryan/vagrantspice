@@ -333,7 +333,7 @@ In order to test the configuration, you must find the public address of the VM w
 
 - CoreOS with <a name="examples_snake_charmer">Snake Charmer</a>
  - Snake Charmer is a project from EMC CODE that focuses on building Docker containers to test and use object services and is available <a href="https://github.com/emccode/snake_charmer">here</a>.  Using the combination of VargrantSpice and Snake Charmer allows you to fire up Docker containers in no time that can use object services.
- - Using the simplest ```spice-examples/global-coreos-boxes_config.rb``` you can run CoreOS in a manual mode and leverage Docker from SSH to run Snake Charmer.  Google requires the ```central``` region.
+ - Using the simplest ```spice-examples/global-coreos-boxes_config.rb``` you can run CoreOS in a manual mode and leverage Docker from SSH to run Snake Charmer.  If using Google, they do not currently have a GCE datacenter on the East Coast so the ```central``` region can be used instead.  Consult the locations table.
  - We can leverage the EMC CODE ```s3proxycmd``` Docker container to list files.
 	```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 -ti emccode/s3proxycmd```
  - Go ahead and run the session interactively instead byu speciying ```--entrypoint=/bin/bash``` as ```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 --entrypoint=/bin/bash -ti emccode/s3proxycmd```
