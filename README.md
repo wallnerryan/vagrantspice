@@ -492,11 +492,11 @@ The boxes_config.rb file specifies at a minimum the names of the machines.  Ther
 
 <A name="instances_config">Instances Config</a>
 -----------------
-This area allows us to configure the custom ```cloud-config``` file.  As part of the CoreOS process we are actually creating a new file and running the standard ```coreos-cloudinit``` command against this new file.
+This area allows us to configure some global defaults for instances.  These defaults may be overridden by higher layers (box, boxes, etc).  We are specifying a few things along with a custom ```cloud-config``` file.  As part of the CoreOS process we are actually creating a new file and running the standard ```coreos-cloudinit``` command against this new file.
 
 Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  This does a ```whoami``` request to ```ip.alt.io``` which returns the IP that the machine is known as publicly.  This is what we use as the public address.
 
-	       'coreos' => {
+	       'coreos-fleet' => {
 	        :common_instance_type => 'small',
 	        :common_image_name => 'CoreOS-stable',
 	        :config_steps_type => 'default_coreos',
@@ -577,6 +577,16 @@ The following table includes instance types or sizes that are deployed to the ma
 |small||||||
 |medium|t2.medium|Medium|2gb|n1-standard-2|1 GB General Purpose v2|N/A
 |large||||||
+|lowcpu_13mem||||||
+|lowcpu_26mem||||||
+|4cpu_lowmem||||||
+|8cpu_lowmem||||||
+|max_cpu||||||
+|max_memory||||||
+
+The ```micro, small, medium, and large``` instances are balanced between memory and cpu.  
+
+The rest of the instances attempt to normalize between providers by using an instance that **at least** satisfies said amount.  Instances starting with ```lowcpu_``` are focused on high memory to cpu ratios.  Instances ending with ```_lowmem``` are focused on high cpu to memory ratios.  The ```max_cpu``` targets ```16 cpus``` and the ```max_memory``` instance targets ```100GB```.
 
 
 <A name="Locations">Locations</a>

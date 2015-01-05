@@ -167,6 +167,30 @@ EOF
           :name => "google.machine_type  = 'n1-standard-8'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "google.machine_type  = 'n1-highmem-2'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "google.machine_type  = 'n1-highmem-4'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-4'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-8'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "google.machine_type  = 'n1-highcpu-16'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "google.machine_type  = 'n1-highmem-16'",
+          :type => :alias,
+        },
       },
       'europe_west' => {
         'micro' => {
@@ -185,6 +209,30 @@ EOF
           :name => "google.machine_type  = 'n1-standard-8'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "google.machine_type  = 'n1-highmem-2'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "google.machine_type  = 'n1-highmem-4'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-4'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-8'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "google.machine_type  = 'n1-highcpu-16'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "google.machine_type  = 'n1-highmem-16'",
+          :type => :alias,
+        },
       },
       'asia_east' => {
         'micro' => {
@@ -201,6 +249,30 @@ EOF
         },
         'large' => {
           :name => "google.machine_type  = 'n1-standard-8'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "google.machine_type  = 'n1-highmem-2'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "google.machine_type  = 'n1-highmem-4'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-4'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "google.machine_type  = 'n1-highcpu-8'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "google.machine_type  = 'n1-highcpu-16'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "google.machine_type  = 'n1-highmem-16'",
           :type => :alias,
         },
       },
@@ -385,6 +457,30 @@ EOF
           :name => "rs.flavor = '8 GB General Purpose v1'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "rs.flavor = '15 GB Memory v1'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "rs.flavor = '30 GB Memory v1'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "rs.flavor = '7.5 GB Compute v1'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "rs.flavor = '15 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "rs.flavor = '30 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "rs.flavor = '120 GB Memory v1'",
+          :type => :alias,
+        },
       },
       'us_east' => {
         'micro' => {
@@ -401,6 +497,30 @@ EOF
         },
         'large' => {
           :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "rs.flavor = '15 GB Memory v1'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "rs.flavor = '30 GB Memory v1'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "rs.flavor = '7.5 GB Compute v1'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "rs.flavor = '15 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "rs.flavor = '30 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "rs.flavor = '120 GB Memory v1'",
           :type => :alias,
         },
       },
@@ -421,6 +541,30 @@ EOF
           :name => "rs.flavor = '8 GB General Purpose v1'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "rs.flavor = '15 GB Memory v1'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "rs.flavor = '30 GB Memory v1'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "rs.flavor = '7.5 GB Compute v1'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "rs.flavor = '15 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "rs.flavor = '30 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "rs.flavor = '120 GB Memory v1'",
+          :type => :alias,
+        },
       },
       'aus_east' => {
         'micro' => {
@@ -437,6 +581,30 @@ EOF
         },
         'large' => {
           :name => "rs.flavor = '8 GB General Purpose v1'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "rs.flavor = '15 GB Memory v1'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "rs.flavor = '30 GB Memory v1'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "rs.flavor = '7.5 GB Compute v1'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "rs.flavor = '15 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "rs.flavor = '30 GB Compute v1'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "rs.flavor = '120 GB Memory v1'",
           :type => :alias,
         },
       },
@@ -634,7 +802,7 @@ EOF
     :instance_type_lookup => {
       'asia_east' => {
         'micro' => {
-          :name => "azure.vm_size = 'ExtraSmall'",
+          :name => "azure.vm_size = 'ExtraLarge'",
           :type => :alias,
         },
         'small' => {
@@ -647,6 +815,30 @@ EOF
         },
         'large' => {
           :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
           :type => :alias,
         },
       },
@@ -667,6 +859,30 @@ EOF
           :name => "azure.vm_size = 'Large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
+          :type => :alias,
+        },
       },
       'europe_north' => {
         'micro' => {
@@ -683,6 +899,30 @@ EOF
         },
         'large' => {
           :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
           :type => :alias,
         },
       },
@@ -703,6 +943,30 @@ EOF
           :name => "azure.vm_size = 'Large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
+          :type => :alias,
+        },
       },
       'japan_west' => {
         'micro' => {
@@ -719,6 +983,30 @@ EOF
         },
         'large' => {
           :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
           :type => :alias,
         },
       },
@@ -739,6 +1027,30 @@ EOF
           :name => "azure.vm_size = 'Large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
+          :type => :alias,
+        },
       },
       'us_east' => {
         'micro' => {
@@ -757,6 +1069,30 @@ EOF
           :name => "azure.vm_size = 'Large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
+          :type => :alias,
+        },
       },
       'us_west' => {
         'micro' => {
@@ -773,6 +1109,30 @@ EOF
         },
         'large' => {
           :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "azure.vm_size = 'A6'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "azure.vm_size = 'Large'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "azure.vm_size = 'ExtraLarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "azure.vm_size = 'A7'",
           :type => :alias,
         },
       },
@@ -977,6 +1337,30 @@ EOF
           :name => "digitalocean.size  = '8gb'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "digitalocean.size = '32gb'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "digitalocean.size = '8gb'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
       },
       'us_east' => {
         'micro' => {
@@ -993,6 +1377,30 @@ EOF
         },
         'large' => {
           :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "digitalocean.size = '32gb'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "digitalocean.size = '8gb'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "digitalocean.size = '64gb'",
           :type => :alias,
         },
       },
@@ -1013,6 +1421,30 @@ EOF
           :name => "digitalocean.size  = '8gb'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "digitalocean.size = '32gb'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "digitalocean.size = '8gb'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
       },
       'europe_west' => {
         'micro' => {
@@ -1031,6 +1463,30 @@ EOF
           :name => "digitalocean.size  = '8gb'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "digitalocean.size = '32gb'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "digitalocean.size = '8gb'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
       },
       'uk_east' => {
         'micro' => {
@@ -1047,6 +1503,30 @@ EOF
         },
         'large' => {
           :name => "digitalocean.size  = '8gb'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "digitalocean.size = '32gb'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "digitalocean.size = '8gb'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "digitalocean.size = '16gb'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "digitalocean.size = '64gb'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "digitalocean.size = '64gb'",
           :type => :alias,
         },
       },
@@ -1327,6 +1807,30 @@ EOF
           :name => "aws.instance_type  = 'm3.large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
+          :type => :alias,
+        },
       },
       'us_east' => {
         'micro' => {
@@ -1343,6 +1847,30 @@ EOF
         },
         'large' => {
           :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
           :type => :alias,
         },
       },
@@ -1363,6 +1891,30 @@ EOF
           :name => "aws.instance_type  = 'm3.large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
+          :type => :alias,
+        },
       },
       'aus_east' => {
         'micro' => {
@@ -1379,6 +1931,30 @@ EOF
         },
         'large' => {
           :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
           :type => :alias,
         },
       },
@@ -1399,6 +1975,30 @@ EOF
           :name => "aws.instance_type  = 'm3.large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
+          :type => :alias,
+        },
       },
       'europe_central' => {
         'micro' => {
@@ -1415,6 +2015,30 @@ EOF
         },
         'large' => {
           :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
           :type => :alias,
         },
       },
@@ -1435,6 +2059,30 @@ EOF
           :name => "aws.instance_type  = 'm3.large'",
           :type => :alias,
         },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
+          :type => :alias,
+        },
       },
       'sa_east' => {
         'micro' => {
@@ -1451,6 +2099,30 @@ EOF
         },
         'large' => {
           :name => "aws.instance_type  = 'm3.large'",
+          :type => :alias,
+        },
+        'lowcpu_13mem' => {
+          :name => "aws.instance_type = 'r3.large'",
+          :type => :alias,
+        },
+        'lowcpu_26mem' => {
+          :name => "aws.instance_type = 'r3.xlarge'",
+          :type => :alias,
+        },
+        '4cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        '8cpu_lowmem' => {
+          :name => "aws.instance_type = 'c3.xlarge'",
+          :type => :alias,
+        },
+        'max_cpu' => {
+          :name => "aws.instance_type = 'c3.4xlarge'",
+          :type => :alias,
+        },
+        'max_memory' => {
+          :name => "aws.instance_type = 'r3.4xlarge'",
           :type => :alias,
         },
       },
