@@ -11,6 +11,12 @@ If you take a peak at the VagrantSpicedir and the provider/consumer config files
 * [Install] (#Install)
 * [Usage] (#Usage)
 * [Examples] (#Examples)
+ * [CoreOS] (#examples_coreos)
+ * [Firewall] (#examples_firewall)
+ * [Cloud-Config] (#examples_cloudconfig)
+ * [Fleet and Etcd] (#examples_fleet)
+ * [Storage] (#examples_storage)
+ * [Snake Charmer] (#examples_snake_charmer)
 * [Configuration] (#Configuration)
  * [Consumer Configuration] (#consumer_configuration)
  * [Firewall] (#Firewall)
@@ -47,7 +53,7 @@ This simplification requires a level of abstraction for commonality to occur.  T
 
 <A name="Version">Version</a>
 -------
-VagrantSpice is currently in early stages of development where we under EMC CODE practices openly develop.  Cloning from the Github repo will ensure the latest versions.
+VagrantSpice is currently in early stages of development under <a href="http://emccode.github.io">EMC {code}</a> standard practices focused on open development.  The project is finishing the discovery phase with a working object model across the five clouds specified.  Cloning from the Github repo will ensure the latest versions.
 
 <br>
 
@@ -93,17 +99,248 @@ Use these steps to run VagrantSpice with the CoreOS demo.
 	
 If you choose a single vm name, you must also specify the ```--provider=name``` flag.
 
+Following this, to delete the machines it is as simple as ```vagrant destroy -f```.  It is good practice to log into the provider from time to time to ensure the VMs running are needed and that orphan disks are not around.
 
 
 # <A name="Examples">Examples</a>
 See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
-- CoreOS (stable, beta, alpha)
-- CoreOS with Firewalls
-- CoreOS additional configuration using ```cloud-config```
-- CoreOS with Fleet
-- CoreOS with Fleet, and Additional Storage
-- CoreOS with Snake Charmer
+- <a name="examples_coreos">CoreOS</a> (stable, beta, alpha)
+ - ```spice-examples/global-coreos-boxes_config.rb```
+ - The following example will work for all providers except Google.  Change the ```us_east``` to ```us_central``` since Google does not have a data center in the ```us_east``` region.
+
+	    	{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_east',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos',
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			}
+
+
+- CoreOS with <a name="examples_firewall">Firewalls</a>
+ - Azure ```spice-examples/google-firewall-boxes_config.rb```.
+
+		{
+		  :boxes => [
+		    { 
+		      :hostname  =>  'coreos01',
+		      :common_location_name => 'us_east',
+		      :common_instance_type => 'micro',
+		      :common_image_name => 'CoreOS-stable',
+		      :type => 'coreos',
+		      :firewall => '4001:4001,7001:7001',
+		    },
+		  ],
+		  :boxes_type => 'coreos',
+		}
+
+
+ - AWS ```spice-examples/aws-firewall-boxes_config.rb```
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_east',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos',
+			      :firewall => "['default','standard']",
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			}
+
+
+ -  Google ```spice-examples/google-firewall-boxes_config.rb```
+
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_central',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos',
+			      :firewall => "default",
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			}
+
+-  Azure ```spice-examples/azure-firewall-boxes_config.rb```
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_east',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos',
+			      :firewall => '4001:4001,7001:7001',
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			}
+
+
+
+- CoreOS additional configuration and running containers manually using <a name="examples_cloudconfig">cloud-config</a>.
+ - Global across providers except firewall settings with ```spice-examples/global-cloudconfig_boxes_config.rb```.  For Google consider switching ```us_east``` to ```us_central```.
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_east',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos',
+			      :firewall => "['default','standard']",
+			      :config_steps => proc {|config_param,box_param| " 
+			public_ipv4=`curl -s ip.alt.io`
+
+			cat <<EOF > /usr/share/oem/cloud-config.yml
+			#cloud-config
+
+			coreos:
+			  units:
+			      - name: helloworld.service
+			        command: start
+			        content: |
+			          [Unit]
+			          Description=EMC CODE HelloWorld Container
+			          After=docker.service
+
+			          [Service]
+			          TimeoutStartSec=0
+			          KillMode=none
+			          EnvironmentFile=/etc/environment
+			          ExecStartPre=-/usr/bin/docker kill helloworld
+			          ExecStartPre=-/usr/bin/docker rm helloworld
+			          ExecStartPre=/usr/bin/docker pull emccode/helloworld
+			          ExecStart=/usr/bin/docker run --name helloworld -p 8080:8080 emccode/helloworld
+			          ExecStop=/usr/bin/docker stop helloworld
+
+			EOF
+			          /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml"
+			      },
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			}
+
+
+
+In order to test the configuration, you must find the public address of the VM with ```vagrant ssh-config coreos01``` and then open a web browser session to ```http://ip:4001/```.  You should see the following ```Hello World from Go in minimal Docker container```.  We are mapping TCP 8080, avaialable under our pre-created firewall policy of ```standard``` or ```default``` for AWS or other provider with firewalls (see firewall section).  
+
+- CoreOS with <a href="examples_fleet">Fleet and Etcd</a>
+ - Available from ```spice-examples/global-fleet-boxes_config.rb``` but requires that you generaete a new etcd cluster identifer from ```curl -s http://http://discovery.etcd.io/new | more``` and replace under ```:etcd_url```.
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'coreos01',
+			      :common_location_name => 'us_east',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-stable',
+			      :type => 'coreos-fleet',
+			      :firewall => "['default','standard']",
+			      :config_param => '{
+			        :etcd_url => "https://discovery.etcd.io/5ecf49ae378548bb7af105c4d38119ae",
+			      }',
+			    }
+			  ],
+			}
+
+
+- CoreOS with Fleet, and <a name="examples_storage">Additional Storage</a>
+ - Available from ```aws-storage-boxes_config.rb``` or ```google-storage-boxes_config.rb```.  The Google version is slightly different since it adds storage to the ```/``` partition instead of as another drive making it not need to do units for carving out the partition and mounting it.
+
+			{
+			  :boxes => [
+			    { 
+			      :hostname  =>  'aws-coreos01',
+			      :common_location_name => 'us_west',
+			      :common_instance_type => 'micro',
+			      :common_image_name => 'CoreOS-beta',
+			    },
+			  ],
+			  :boxes_type => 'coreos',
+			  :config_param => '{
+			      :etcd_url => "https://discovery.etcd.io/18179f2ce7a9bddc11463ff157907af8",
+			    }',
+			  :firewall => "['default','standard']",
+			  :storage => "[{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }]",
+			  :config_steps => proc {|config_param,box_param| " 
+			public_ipv4=`curl -s ip.alt.io`
+
+			cat <<EOF > /usr/share/oem/cloud-config.yml
+			#cloud-config
+
+			coreos:
+			  etcd:
+			    discovery: #{config_param[:etcd_url]}
+			    addr: $public_ipv4:4001
+			    peer-addr: $public_ipv4:7001
+			    peer-election-timeout: 7500
+			    peer-heartbeat-interval: 1500
+			  fleet:
+			    public-ip: $public_ipv4
+			    metadata: region=#{box_param[:location]},provider=#{$provider},platform=cloud,instance_type=#{box_param[:common_instance_type]}
+			  units:
+			      - name: etcd.service
+			        command: start
+			      - name: fleet.service
+			        command: start
+			      - name: format-ephemeral.service
+			        command: start
+			        content: |
+			          [Unit]
+			          Description=Formats the ephemeral drive
+			          [Service]
+			          Type=oneshot
+			          RemainAfterExit=yes
+			          ExecStart=/usr/sbin/wipefs -f /dev/xvdb
+			          ExecStart=/usr/sbin/mkfs.btrfs -L root -f /dev/xvdb
+			      - name: var-lib-docker.mount
+			        command: start
+			        content: |
+			          [Unit]
+			          Description=Mount ephemeral to /var/lib/docker
+			          Requires=format-ephemeral.service
+			          After=format-ephemeral.service
+			          Before=docker.service
+			          [Mount]
+			          What=/dev/xvdb
+			          Where=/var/lib/docker
+			          Type=btrfs
+			EOF
+			          /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml"
+			          },
+			}
+
+- CoreOS with <a name="examples_snake_charmer">Snake Charmer</a>
+ - Snake Charmer is a project from EMC CODE that focuses on building Docker containers to test and use object services and is available <a href="https://github.com/emccode/snake_charmer">here</a>.  Using the combination of VargrantSpice and Snake Charmer allows you to fire up Docker containers in no time that can use object services.
+ - Using the simplest ```spice-examples/global-coreos-boxes_config.rb``` you can run CoreOS in a manual mode and leverage Docker from SSH to run Snake Charmer.  Google requires the ```central``` region.
+- We can leverage the EMC CODE ```s3proxycmd``` Docker container to list files.
+	```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 -ti emccode/s3proxycmd```
+- Go ahead and run the session interactively instead byu speciying ```--entrypoint=/bin/bash``` as ```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 --entrypoint=/bin/bash -ti emccode/s3proxycmd```
+- First run ```run_s3_proxy_cmd.sh``` if you have supplied proxy information to create the ```/tmp/.s3cfg``` file.  Otherwise you can run ```s3cmd --configure``` to use ```s3cmd``` without a proxy (do not specify --config if doing this).
+- Following this commands like ```s3cmd --config /tmp/.s3cfg ls``` will work.
+- Create a file of random data ```head -c 50M < /dev/urandom > file```
+- Upload the file to an S3 provider ```s3cmd --config /tmp/.s3cfg put s3://testing/file``
+
+- You can also run ```s3cmd --configure``` once in the
+
 
 
 # <A name="Configuration">Configuration</a>
@@ -354,7 +591,7 @@ The following table represents the physical location choices among providers.
 |japan_west|yes|yes||||
 |sa_east|yes|||||
 |us_central||yes|||yes|
-|us_east|yes|yes|yes|yes|yes|
+|us_east|yes|yes|yes||yes|
 |us_west|yes|yes|yes|||
 |uk_east|||yes|||
 
@@ -499,7 +736,7 @@ Work in progress..
 
 Digital Ocean
 
-	curl -X GET -H 'Content-Type: application/json' -H 'Authorization: Bearer yourtoken' "https://api.digitalocean.com/v2/images?page=1&per_page=999" | python -m json.tool 
+```vagrant digitalocean-list images token```
 
 
 <A name="Limitations">Limitations</a>

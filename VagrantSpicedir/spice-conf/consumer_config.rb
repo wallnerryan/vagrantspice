@@ -26,13 +26,13 @@
 
   },
   'digital_ocean' => {
-    :token => '',
+    :token => 'token',
     :private_key => 'cert/digital_ocean',
     :ssh_key_name => 'Vagrant',
   },
   'google' => {
     :google_project_id => 'lucid-sol-713',
-    :google_client_email  => 'add@developer.gserviceaccount.com',
+    :google_client_email  => 'yah@developer.gserviceaccount.com',
     :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
     :private_key => "cert/google_compute_engine",
   },
@@ -42,7 +42,7 @@
   },
   'rackspace' => {
     :username => 'clintonskitson',
-    :api_key  => 'apikey',
+    :api_key  => 'key',
     :keypair_name => 'id_rsa',
     :private_key => 'cert/id_rsa',
   },
@@ -56,12 +56,6 @@
 
   :defaults => {
     :domain => "vagrantspice.local",
-    :instances_config => {
-      'coreos' => {
-        :config_param => '{
-          :etcd_url => "https://discovery.etcd.io/5a06f86a07db91ca220545745f890a98",
-        }',
-      }
-    },
+    :instances_config => {},
   }
 }

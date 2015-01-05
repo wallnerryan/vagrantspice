@@ -63,10 +63,10 @@ Vagrant.configure("2") do |config|
       eval(sync_folder)
 
       config_param_str = box[:config_param] || boxes_config[:config_param] \
-        || $provider_config[$provider][:instances_config][box_type][:config_param] \
+        || if $provider_config[$provider][:instances_config][box_type] then $provider_config[$provider][:instances_config][box_type][:config_param] end \
         || $provider_config[$provider][:defaults][:config_param] \
-        || $consumer_config[:defaults][:instances_config][box_type][:config_param] \
-        || $provider_config[:defaults][:instances_config][box_type][:config_param] \
+        || if $consumer_config[:defaults][:instances_config][box_type] then $consumer_config[:defaults][:instances_config][box_type][:config_param] end \
+        || if $provider_config[:defaults][:instances_config][box_type] then $provider_config[:defaults][:instances_config][box_type][:config_param] end \
         || $provider_config[:defaults][:config_param]
       config_param = eval(config_param_str)
 

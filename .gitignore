@@ -1,4 +1,5 @@
 cert/
 files/
 .vagrant/
+VagrantSpicedir/spice-conf/consumer_config.rb.bak
 

@@ -15,7 +15,7 @@
       :common_location_name => 'us_west',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
-      :firewall => 'default'
+      :firewall => 'default',
     },
     :ip_resolver => $ip_resolver[:ssh_ip],
     :instances_config => {
@@ -54,7 +54,17 @@
         }        
       },
       'coreos' => {
-        :common_instance_type => 'small',
+        :common_instance_type => 'micro',
+        :common_image_name => 'CoreOS-stable',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param,box_param| },
+        },
+      },
+      'coreos-fleet' => {
+        :common_instance_type => 'micro',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
@@ -259,7 +269,17 @@ EOF
         }        
       },
       'coreos' => {
-        :common_instance_type => 'small',
+        :common_instance_type => 'micro',
+        :common_image_name => 'CoreOS-stable',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param,box_param| },
+        },
+      },
+      'coreos-fleet' => {
+        :common_instance_type => 'micro',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
@@ -500,7 +520,17 @@ EOF
         }        
       },
       'coreos' => {
-        :common_instance_type => 'small',
+        :common_instance_type => 'micro',
+        :common_image_name => 'CoreOS-stable',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param,box_param| },
+        },
+      },
+      'coreos-fleet' => {
+        :common_instance_type => 'micro',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
@@ -824,7 +854,17 @@ EOF
         }        
       },
       'coreos' => {
-        :common_instance_type => 'small',
+        :common_instance_type => 'micro',
+        :common_image_name => 'CoreOS-stable',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param,box_param| },
+        },
+      },
+      'coreos-fleet' => {
+        :common_instance_type => 'micro',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
@@ -877,46 +917,46 @@ EOF
       '6.5 x64' => {
         :ssh_username => 'root'
       },
-      '494.5.0 (stable)' => {
+      'coreos-stable' => {
         :ssh_username => 'core'
       },
-      '522.3.0 (beta)' => {
+      'coreos-beta' => {
         :ssh_username => 'core'
       },
-      '550.0.0 (alpha)' => {
+      'coreos-alpha' => {
         :ssh_username => 'core'
       },
     },
     :images_lookup => {
       'us_west' => {
         'CentOS-6.5-x64' => '6.5 x64',
-        'CoreOS-stable' => '494.5.0 (stable)',
-        'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '550.0.0 (alpha)',
+        'CoreOS-stable' => 'coreos-stable',
+        'CoreOS-beta' => 'coreos-beta',
+        'CoreOS-alpha' => 'coreos-alpha',
       },
       'us_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
-        'CoreOS-stable' => '494.5.0 (stable)',
-        'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '550.0.0 (alpha)',
+        'CoreOS-stable' => 'coreos-stable',
+        'CoreOS-beta' => 'coreos-beta',
+        'CoreOS-alpha' => 'coreos-alpha',
       },
       'asia_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
-        'CoreOS-stable' => '494.5.0 (stable)',
-        'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '550.0.0 (alpha)',
+        'CoreOS-stable' => 'coreos-stable',
+        'CoreOS-beta' => 'coreos-beta',
+        'CoreOS-alpha' => 'coreos-alpha',
       },
       'europe_west' => {
         'CentOS-6.5-x64' => '6.5 x64',
-        'CoreOS-stable' => '494.5.0 (stable)',
-        'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '550.0.0 (alpha)',
+        'CoreOS-stable' => 'coreos-stable',
+        'CoreOS-beta' => 'coreos-beta',
+        'CoreOS-alpha' => 'coreos-alpha',
       },
       'uk_east' => {
         'CentOS-6.5-x64' => '6.5 x64',
-        'CoreOS-stable' => '494.5.0 (stable)',
-        'CoreOS-beta' => '522.3.0 (beta)',
-        'CoreOS-alpha' => '550.0.0 (alpha)',
+        'CoreOS-stable' => 'coreos-stable',
+        'CoreOS-beta' => 'coreos-beta',
+        'CoreOS-alpha' => 'coreos-alpha',
       },
     },
     :instance_type_lookup => {
@@ -1044,7 +1084,7 @@ EOF
       :common_location_name => 'us_west',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
-      :security_groups => ['default']
+      :firewall => "['default']",
     },
     :ip_resolver => $ip_resolver[:ifconfig].call('eth0'),
     :instances_config => {
@@ -1071,7 +1111,17 @@ EOF
         }        
       },
       'coreos' => {
-        :common_instance_type => 'small',
+        :common_instance_type => 'micro',
+        :common_image_name => 'CoreOS-stable',
+        :config_steps_type => 'default_coreos',
+        :commands => {
+          :pre_install => '',
+          :install => proc {|config_param|  },
+          :post_install => proc {|config_param,box_param| },
+        },
+      },
+      'coreos-fleet' => {
+        :common_instance_type => 'micro',
         :common_image_name => 'CoreOS-stable',
         :config_steps_type => 'default_coreos',
         :commands => {
