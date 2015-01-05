@@ -242,7 +242,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 In order to test the configuration, you must find the public address of the VM with ```vagrant ssh-config coreos01``` and then open a web browser session to ```http://ip:4001/```.  You should see the following ```Hello World from Go in minimal Docker container```.  We are mapping TCP 8080, avaialable under our pre-created firewall policy of ```standard``` or ```default``` for AWS or other provider with firewalls (see firewall section).  
 
-- CoreOS with <a href="examples_fleet">Fleet and Etcd</a>
+- CoreOS with <a name="examples_fleet">Fleet and Etcd</a>
  - Available from ```spice-examples/global-fleet-boxes_config.rb``` but requires that you generaete a new etcd cluster identifer from ```curl -s http://http://discovery.etcd.io/new | more``` and replace under ```:etcd_url```.
 
 			{
