@@ -331,15 +331,15 @@ In order to test the configuration, you must find the public address of the VM w
 - CoreOS with <a name="examples_snake_charmer">Snake Charmer</a>
  - Snake Charmer is a project from EMC CODE that focuses on building Docker containers to test and use object services and is available <a href="https://github.com/emccode/snake_charmer">here</a>.  Using the combination of VargrantSpice and Snake Charmer allows you to fire up Docker containers in no time that can use object services.
  - Using the simplest ```spice-examples/global-coreos-boxes_config.rb``` you can run CoreOS in a manual mode and leverage Docker from SSH to run Snake Charmer.  Google requires the ```central``` region.
-- We can leverage the EMC CODE ```s3proxycmd``` Docker container to list files.
+ - We can leverage the EMC CODE ```s3proxycmd``` Docker container to list files.
 	```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 -ti emccode/s3proxycmd```
-- Go ahead and run the session interactively instead byu speciying ```--entrypoint=/bin/bash``` as ```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 --entrypoint=/bin/bash -ti emccode/s3proxycmd```
-- First run ```run_s3_proxy_cmd.sh``` if you have supplied proxy information to create the ```/tmp/.s3cfg``` file.  Otherwise you can run ```s3cmd --configure``` to use ```s3cmd``` without a proxy (do not specify --config if doing this).
-- Following this commands like ```s3cmd --config /tmp/.s3cfg ls``` will work.
-- Create a file of random data ```head -c 50M < /dev/urandom > file```
-- Upload the file to an S3 provider ```s3cmd --config /tmp/.s3cfg put s3://testing/file``
+ - Go ahead and run the session interactively instead byu speciying ```--entrypoint=/bin/bash``` as ```docker run -e 'access_key=user055' -e 'secret_key=key' -e proxy_host=object.vipronline.com -e proxy_port=80 --entrypoint=/bin/bash -ti emccode/s3proxycmd```
+ - First run ```run_s3_proxy_cmd.sh``` if you have supplied proxy information to create the ```/tmp/.s3cfg``` file.  Otherwise you can run ```s3cmd --configure``` to use ```s3cmd``` without a proxy (do not specify --config if doing this).
+ - Following this commands like ```s3cmd --config /tmp/.s3cfg ls``` will work.
+ - Create a file of random data ```head -c 50M < /dev/urandom > file```
+ - Upload the file to an S3 provider ```s3cmd --config /tmp/.s3cfg put s3://testing/file``
 
-- You can also run ```s3cmd --configure``` once in the
+ - You can also run ```s3cmd --configure``` once in the
 
 
 
