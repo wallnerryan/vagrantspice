@@ -20,38 +20,37 @@
     :ip_resolver => $ip_resolver[:ssh_ip],
     :instances_config => {
       'puppetmaster' => {
-        :common_instance_type => 'small',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'mini',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
-        #:object_source => 'google_storage',
-        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
         :sync_folder => "
+          deploy_config.vm.synced_folder 'sync', '/opt/sync'
           deploy_config.vm.synced_folder 'cert', '/tmp/cert'
           deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
         ",
-        :object_creds => {
-          :service_account => $consumer_config['google_storage'][:service_account],
-          :key_file => $consumer_config['google_storage'][:key_file],
-        },
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install_scaleio].call(config_param) },
         }
       },
       'puppetagent' => {
         :common_instance_type => 'medium',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
-        #:disk_size => 110,
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync/schelper', '/opt/schelper'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-        }        
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install_docker_scaleio].call(config_param) },
+        }
       },
       'coreos' => {
         :common_instance_type => 'micro',
@@ -70,7 +69,7 @@
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param,box_param| " 
+          :post_install => proc {|config_param,box_param| "
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -94,7 +93,7 @@ coreos:
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
-        } }        
+        } }
       },
     },
     :deploy_box_config => "
@@ -119,6 +118,9 @@ EOF
       'centos-6-v20141021' => {
         :ssh_username => 'clintonkitson'
       },
+      'centos-7-v20150226' => {
+        :ssh_username => 'clintonkitson'
+      },
       'coreos-stable-494-5-0-v20141215' => {
         :ssh_username => 'core'
       },
@@ -135,18 +137,21 @@ EOF
         'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
         'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
         'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+        'CentOS-7-x64' => 'centos-7-v20150226'
       },
       'europe_west' => {
         'CentOS-6.5-x64' => 'centos-6-v20141021',
         'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
         'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
         'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+        'CentOS-7-x64' => 'centos-7-v20150226'
       },
       'asia_east' => {
         'CentOS-6.5-x64' => 'centos-6-v20141021',
         'CoreOS-stable' => 'coreos-stable-494-5-0-v20141215',
         'CoreOS-beta' => 'coreos-beta-522-3-0-v20141226',
         'CoreOS-alpha' => 'coreos-alpha-549-0-0-v20150102',
+        'CentOS-7-x64' => 'centos-7-v20150226'
       },
     },
     :instance_type_lookup => {
@@ -311,34 +316,37 @@ EOF
     :ip_resolver => $ip_resolver[:ifconfig].call('eth1'),
     :instances_config => {
       'puppetmaster' => {
-        :common_instance_type => 'small',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'mini',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
-        #:object_source => 'rackspace_swift',
-        #:repo_url => 'https://github.com/emccode/vagrant-puppet-scaleio',
-        #:object_creds => {
-        #  :st_key => $consumer_config['rackspace_swift'][:st_key],
-        #  :st_user => $consumer_config['rackspace_swift'][:st_user],
-        #  :st_auth => $consumer_config['rackspace_swift'][:st_auth],
-        #},
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync', '/opt/sync'
+          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
-          #:sitepp_curl => $images_config['default_linux'][:commands][:curl_file].call('https://raw.githubusercontent.com/emccode/vagrant-puppet-scaleio/master/puppet/manifests/examples/site.pp-hosts_lookup','/etc/puppet/manifests/site.pp')
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install_scaleio].call(config_param) },
         }
       },
       'puppetagent' => {
         :common_instance_type => 'medium',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync/schelper', '/opt/schelper'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) },
-        }        
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install_docker_scaleio].call(config_param) },
+        }
       },
       'coreos' => {
         :common_instance_type => 'micro',
@@ -357,7 +365,7 @@ EOF
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param,box_param| " 
+          :post_install => proc {|config_param,box_param| "
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -381,7 +389,7 @@ coreos:
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
-        } }        
+        } }
       },
     },
     :deploy_box_config => "
@@ -399,6 +407,9 @@ EOF
       end
     ",
     :images_config => {
+      'CentOS 7 (PVHVM)' => {
+        :ssh_username => 'root'
+      },
       'CentOS 6.5 (PVHVM)' => {
         :ssh_username => 'root'
       },
@@ -414,24 +425,28 @@ EOF
     },
     :images_lookup => {
       'us_central' => {
+        'CentOS-7-x64' => 'CentOS 7 (PVHVM)',
         'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
         'CoreOS-stable' => 'CoreOS (Stable)',
         'CoreOS-beta' => 'CoreOS (Beta)',
         'CoreOS-alpha' => 'CoreOS (Alpha)',
       },
       'us_east' => {
+        'CentOS-7-x64' => 'CentOS 7 (PVHVM)',
         'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
         'CoreOS-stable' => 'CoreOS (Stable)',
         'CoreOS-beta' => 'CoreOS (Beta)',
         'CoreOS-alpha' => 'CoreOS (Alpha)',
       },
       'asia_east' => {
+        'CentOS-7-x64' => 'CentOS 7 (PVHVM)',
         'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
         'CoreOS-stable' => 'CoreOS (Stable)',
         'CoreOS-beta' => 'CoreOS (Beta)',
         'CoreOS-alpha' => 'CoreOS (Alpha)',
       },
       'aus_east' => {
+        'CentOS-7-x64' => 'CentOS 7 (PVHVM)',
         'CentOS-6.5-x64' => 'CentOS 6.5 (PVHVM)',
         'CoreOS-stable' => 'CoreOS (Stable)',
         'CoreOS-beta' => 'CoreOS (Beta)',
@@ -645,7 +660,7 @@ EOF
         azure.mgmt_certificate = $consumer_config[$provider][:mgmt_certificate]
         azure.mgmt_endpoint = $consumer_config[$provider][:mgmt_endpoint]
         azure.subscription_id = $consumer_config[$provider][:subscription_id]
-        
+
         azure.vm_image = instance_image
         eval(str_instance_type)
         azure.vm_user = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
@@ -664,28 +679,37 @@ EOF
     :ip_resolver => $ip_resolver[:ssh_hostname],
     :instances_config => {
       'puppetmaster' => {
-        :instance_type => 'Small',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'mini',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
-        :ssh_port => 22,
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync', '/opt/sync'
+          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install_scaleio].call(config_param) },
         }
       },
       'puppetagent' => {
-        :instance_type => 'Medium',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'medium',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
-        :ssh_port => 22,
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync/schelper', '/opt/schelper'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-        }        
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install_docker_scaleio].call(config_param) },
+        }
       },
       'coreos' => {
         :common_instance_type => 'micro',
@@ -704,7 +728,7 @@ EOF
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param,box_param| " 
+          :post_install => proc {|config_param,box_param| "
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -728,10 +752,14 @@ coreos:
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
-        } }        
+        } }
       },
     },
     :images_config => {
+      '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2' => {
+        :ssh_username => 'centos',
+        :box => 'azure'
+      },
       '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926' => {
         :ssh_username => 'centos',
         :box => 'azure'
@@ -751,48 +779,56 @@ EOF
     },
     :images_lookup => {
       'asia_east' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-522.2.0',
       },
       'aus_east' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'europe_north' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'europe_west' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'japan_west' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_central' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_east' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
         'CoreOS-alpha' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Alpha-547.0.0',
       },
       'us_west' => {
+        'CentOS-7-x64' => '0b11de9248dd4d87b18621318e037d37__RightImage-CentOS-7.0-x64-v14.2',
         'CentOS-6.5-x64' => '5112500ae3b842c8b9c604889f8753c3__OpenLogic-CentOS-65-20140926',
         'CoreOS-stable' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Stable-494.5.0',
         'CoreOS-beta' => '2b171e93f07c4903bcad35bda10acf22__CoreOS-Beta-522.3.0',
@@ -1170,10 +1206,10 @@ EOF
         azure.vm_location = 'East US'
         azure.storage_acct_name = '#{$consumer_config['azure'][:storage_acct_name_prefix]}eastus'
       ",
-    }, 
+    },
     :firewall => 'azure.tcp_endpoints = str_firewall',
   },
-  'digital_ocean' => {  
+  'digital_ocean' => {
     :requires => "
       require 'vagrant-digitalocean'
       require 'vagrant-hostmanager'
@@ -1192,26 +1228,37 @@ EOF
     :ip_resolver => $ip_resolver[:ssh_ip],
     :instances_config => {
       'puppetmaster' => {
-        :common_instance_type => 'small',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'mini',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync', '/opt/sync'
+          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install_scaleio].call(config_param) },
         }
       },
       'puppetagent' => {
         :common_instance_type => 'medium',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync/schelper', '/opt/schelper'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-        }        
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install_docker_scaleio].call(config_param) },
+        }
       },
       'coreos' => {
         :common_instance_type => 'micro',
@@ -1230,7 +1277,7 @@ EOF
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param,box_param| " 
+          :post_install => proc {|config_param,box_param| "
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -1254,7 +1301,7 @@ coreos:
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
-        } }        
+        } }
       },
     },
     :deploy_box_config => "
@@ -1264,17 +1311,21 @@ EOF
         eval(str_location)
         eval(str_instance_type)
         eval(str_optional)
-        digitalocean.ssh_key_name = box[:ssh_key_name] || $provider_config[$provider][:instances_config][box_type][:ssh_key_name] || $consumer_config[$provider][:ssh_key_name]        
+        digitalocean.ssh_key_name = box[:ssh_key_name] || $provider_config[$provider][:instances_config][box_type][:ssh_key_name] || $consumer_config[$provider][:ssh_key_name]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
+
         #override.vm.box = 'digital_ocean'
-        #{}override.vm.box_url = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
+        #override.vm.box_url = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
         digitalocean.setup = false
         override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
       end
-      
+
     ",
     :images_config => {
-      '6.5 x64' => {
+      'centos-7-0-x64' => {
+        :ssh_username => 'root'
+      },
+      'centos-6-5-x64' => {
         :ssh_username => 'root'
       },
       'coreos-stable' => {
@@ -1289,31 +1340,36 @@ EOF
     },
     :images_lookup => {
       'us_west' => {
-        'CentOS-6.5-x64' => '6.5 x64',
+        'CentOS-7-x64' => 'centos-7-0-x64',
+        'CentOS-6.5-x64' => 'centos-6-5-x64',
         'CoreOS-stable' => 'coreos-stable',
         'CoreOS-beta' => 'coreos-beta',
         'CoreOS-alpha' => 'coreos-alpha',
       },
       'us_east' => {
-        'CentOS-6.5-x64' => '6.5 x64',
+        'CentOS-7-x64' => 'centos-7-0-x64',
+        'CentOS-6.5-x64' => 'centos-6-5-x64',
         'CoreOS-stable' => 'coreos-stable',
         'CoreOS-beta' => 'coreos-beta',
         'CoreOS-alpha' => 'coreos-alpha',
       },
       'asia_east' => {
-        'CentOS-6.5-x64' => '6.5 x64',
+        'CentOS-7-x64' => 'centos-7-0-x64',
+        'CentOS-6.5-x64' => 'centos-6-5-x64',
         'CoreOS-stable' => 'coreos-stable',
         'CoreOS-beta' => 'coreos-beta',
         'CoreOS-alpha' => 'coreos-alpha',
       },
       'europe_west' => {
-        'CentOS-6.5-x64' => '6.5 x64',
+        'CentOS-7-x64' => 'centos-7-0-x64',
+        'CentOS-6.5-x64' => 'centos-6-5-x64',
         'CoreOS-stable' => 'coreos-stable',
         'CoreOS-beta' => 'coreos-beta',
         'CoreOS-alpha' => 'coreos-alpha',
       },
       'uk_east' => {
-        'CentOS-6.5-x64' => '6.5 x64',
+        'CentOS-7-x64' => 'centos-7-0-x64',
+        'CentOS-6.5-x64' => 'centos-6-5-x64',
         'CoreOS-stable' => 'coreos-stable',
         'CoreOS-beta' => 'coreos-beta',
         'CoreOS-alpha' => 'coreos-alpha',
@@ -1550,7 +1606,7 @@ EOF
       ",
     },
   },
-  'aws' => {  
+  'aws' => {
     :requires => "
       require 'vagrant-aws'
       require 'vagrant-hostmanager'
@@ -1569,26 +1625,36 @@ EOF
     :ip_resolver => $ip_resolver[:ifconfig].call('eth0'),
     :instances_config => {
       'puppetmaster' => {
-        :common_instance_type => 'small',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_instance_type => 'mini',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
+        :sync_folder => "
+          deploy_config.vm.synced_folder 'sync', '/opt/sync'
+          deploy_config.vm.synced_folder 'cert', '/tmp/cert'
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetmaster_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetmaster_install_scaleio].call(config_param) },
         }
       },
       'puppetagent' => {
         :common_instance_type => 'medium',
-        :common_image_name => 'CentOS-6.5-x64',
+        :common_image_name => 'CentOS-7-x64',
         :config_steps_type => 'default_linux',
+        :sync_folder => "
+          deploy_config.vm.synced_folder '.', '/vagrant', disabled: true
+        ",
         :commands => {
           :dns_update => $images_config['default_linux'][:dns_update],
-          :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
+          :pre_install => $images_config['CentOS-7-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
-          :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-        }        
+          :install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install].call(config_param) },
+          :post_install => proc {|config_param| $images_config['CentOS-7-x64'][:commands][:puppetagent_install_docker_scaleio].call(config_param) },
+        }
       },
       'coreos' => {
         :common_instance_type => 'micro',
@@ -1607,7 +1673,7 @@ EOF
         :commands => {
           :pre_install => '',
           :install => proc {|config_param|  },
-          :post_install => proc {|config_param,box_param| " 
+          :post_install => proc {|config_param,box_param| "
 public_ipv4=`curl -s ip.alt.io`
 
 cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -1631,7 +1697,7 @@ coreos:
 EOF
         /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 "
-        } }        
+        } }
       },
     },
     :deploy_box_config => "
@@ -1648,6 +1714,8 @@ EOF
 
         eval($provider_config[$provider][:storage])
 
+        eval($provider_config[$provider][:user_data])
+
         aws.keypair_name = box[:keypair_name] || $provider_config[$provider][:instances_config][box_type][:keypair_name] || $consumer_config[$provider][:keypair_name]
         override.ssh.private_key_path = box[:private_key] || $provider_config[$provider][:instances_config][box_type][:private_key] || $consumer_config[$provider][:private_key]
         override.ssh.username = box[:ssh_username] || $provider_config[$provider][:images_config][instance_image][:ssh_username]
@@ -1657,7 +1725,49 @@ EOF
       'ami-454b5e00' => {
         :ssh_username => 'ec2-user'
       },
-      
+
+
+      'ami-6bcfc42e' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-96a818fe' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-aea582fc' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-bd523087' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-e4ff5c93' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-bc7548a1' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-89634988' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+      'ami-bf9520a2' => {
+        :ssh_username => 'centos',
+        :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
+      },
+
+
       'ami-17fae852' => {
         :ssh_username => 'core'
       },
@@ -1741,48 +1851,56 @@ EOF
     },
     :images_lookup => {
       'us_west' => {
+        'CentOS-7-x64' => 'ami-6bcfc42e',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-17fae852',
         'CoreOS-beta' => 'ami-019d8044',
         'CoreOS-alpha' => 'ami-cfc5d98a',
       },
       'us_east' => {
+        'CentOS-7-x64' => 'ami-96a818fe',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-705d3d18',
         'CoreOS-beta' => 'ami-d8751bb0',
         'CoreOS-alpha' => 'ami-14741e7c',
       },
       'asia_east' => {
+        'CentOS-7-x64' => 'ami-aea582fc',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-cf82af9d',
         'CoreOS-beta' => 'ami-4f5d731d',
         'CoreOS-alpha' => 'ami-0f86a85d',
       },
       'aus_east' => {
+        'CentOS-7-x64' => 'ami-bd523087',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-d1e981eb',
         'CoreOS-beta' => 'ami-6bacc751',
         'CoreOS-alpha' => 'ami-1b3e5421',
       },
       'europe_west' => {
+        'CentOS-7-x64' => 'ami-e4ff5c93',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-f4853883',
         'CoreOS-beta' => 'ami-0e73c879',
         'CoreOS-alpha' => 'ami-a41590d3',
       },
       'europe_central' => {
+        'CentOS-7-x64' => 'ami-bc7548a1',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-487d4d55',
         'CoreOS-beta' => 'ami-5027174d',
         'CoreOS-alpha' => 'ami-ace3d3b1',
       },
       'japan_west' => {
+        'CentOS-7-x64' => 'ami-89634988',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-decfc0df',
         'CoreOS-beta' => 'ami-4af1fc4b',
         'CoreOS-alpha' => 'ami-9a0f1b9b',
       },
       'sa_east' => {
+        'CentOS-7-x64' => 'ami-bf9520a2',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-cb04b4d6',
         'CoreOS-beta' => 'ami-dd6ddec0',
@@ -2163,6 +2281,7 @@ EOF
     },
     :firewall => 'aws.security_groups = (eval(str_firewall) unless !str_firewall) || []',
     :storage => 'aws.block_device_mapping = (eval(str_storage) unless !str_storage) || []',
+    :user_data => 'aws.user_data = (eval(str_user_data) unless !str_user_data) || ""',
   },
   'virtualbox' => {
     :requires => "
@@ -2200,7 +2319,7 @@ EOF
         }
       },
       'puppetagent' => {
-        :common_instance_type => 'medium',
+        :common_instance_type => 'small',
         :common_image_name => 'CentOS-6.5-x64',
         :config_steps_type => 'default_linux',
         :commands => {
@@ -2208,7 +2327,7 @@ EOF
           :pre_install => $images_config['CentOS-6.5-x64'][:commands][:puppetagent_remove],
           :set_hostname => proc {|hostname,domain| $images_config['default_linux'][:commands][:set_hostname].call(hostname,domain) },
           :install => proc {|config_param| $images_config['CentOS-6.5-x64'][:commands][:puppetagent_install].call(config_param) }
-        }        
+        }
       },
     },
     :images_config => {
@@ -2231,7 +2350,7 @@ EOF
         :cpus => "virtualbox.cpus = 1",
         :type => :custom,
       },
-    }, 
+    },
   },
   :defaults => {
     :config => '
@@ -2249,27 +2368,29 @@ EOF
     }',
     :instances_config => {
       'puppetmaster' => {
-        :domain => 'scaleio.local',
+        :domain => 'vagrantspice.local',
         :plugin_config => "
+          config.ssh.pty = true
           config.hostmanager.enabled = true
           config.hostmanager.manage_host = false
           config.hostmanager.ignore_private_ip = true
           config.hostmanager.include_offline = false
         ",
         :plugin_config_vm => "
-          deploy_config.hostmanager.aliases = box[:hostname] 
+          deploy_config.hostmanager.aliases = box[:hostname]
         ",
       },
       'puppetagent' => {
-        :domain => 'scaleio.local',
+        :domain => 'vagrantspice.local',
         :plugin_config => "
+          config.ssh.pty = true
           config.hostmanager.enabled = true
           config.hostmanager.manage_host = false
           config.hostmanager.ignore_private_ip = true
           config.hostmanager.include_offline = false
         ",
         :plugin_config_vm => "
-          deploy_config.hostmanager.aliases = box[:hostname] 
+          deploy_config.hostmanager.aliases = box[:hostname]
         ",
       }
     }

@@ -4,7 +4,7 @@
     :mgmt_endpoint => 'https://management.core.windows.net',
     :subscription_id => 'ce5684a8-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
     :storage_acct_name => 'portalvhds6qmhy1bc0fqn9',
-    :storage_acct_name_prefix => 'ce5684a8',  
+    :storage_acct_name_prefix => 'ce5684a8',
     :private_key => 'cert/azure.pem',
     :public_cert => 'cert/azure.cer',
   },
@@ -14,7 +14,7 @@
   },
   'aws' => {
     :access_key_id => 'AK',
-    :secret_access_key => 'j+',
+    :secret_access_key => 'jSv',
     :keypair_name => 'id_rsa',
     :private_key => 'cert/id_rsa.pem',
   },

@@ -6,6 +6,17 @@ The primary example in the current version is getting a CoreOS Fleet cluster up 
 
 If you take a peak at the VagrantSpicedir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
 
+# This branch includes Docker and REX-Ray support for AWS
+
+1) Configure VagrantSpice
+2) vagrant up --no-parallel
+3) vagrant ssh mdm1
+4) service rexray restart
+4) rexray get-instance
+5) docker run -ti --volume-driver=rexray -v testing:/testing busybox
+
+
+
 * [Summary] (#Summary)
  * [Version] (#Version)
 * [Install] (#Install)
@@ -99,7 +110,7 @@ Use these steps to run VagrantSpice with the CoreOS demo.
 	cd ../provider2
 	vagrant up
 
-	
+
 If you choose a single vm name, you must also specify the ```--provider=name``` flag.
 
 Following this, to delete the machines it is as simple as ```vagrant destroy -f```.  It is good practice to log into the provider from time to time to ensure the VMs running are needed and that orphan disks are not around.
@@ -114,7 +125,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 	    	{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_east',
 			      :common_instance_type => 'micro',
@@ -131,7 +142,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 		{
 		  :boxes => [
-		    { 
+		    {
 		      :hostname  =>  'coreos01',
 		      :common_location_name => 'us_east',
 		      :common_instance_type => 'micro',
@@ -148,7 +159,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_east',
 			      :common_instance_type => 'micro',
@@ -166,7 +177,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_central',
 			      :common_instance_type => 'micro',
@@ -182,7 +193,7 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_east',
 			      :common_instance_type => 'micro',
@@ -201,14 +212,14 @@ See the ```spice-examples``` directory of ```boxes_config.rb``` files.
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_east',
 			      :common_instance_type => 'micro',
 			      :common_image_name => 'CoreOS-stable',
 			      :type => 'coreos',
 			      :firewall => "['default','standard']",
-			      :config_steps => proc {|config_param,box_param| " 
+			      :config_steps => proc {|config_param,box_param| "
 			public_ipv4=`curl -s ip.alt.io`
 
 			cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -250,7 +261,7 @@ In order to test the configuration, you must find the public address of the VM w
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'coreos01',
 			      :common_location_name => 'us_east',
 			      :common_instance_type => 'micro',
@@ -270,7 +281,7 @@ In order to test the configuration, you must find the public address of the VM w
 
 			{
 			  :boxes => [
-			    { 
+			    {
 			      :hostname  =>  'aws-coreos01',
 			      :common_location_name => 'us_west',
 			      :common_instance_type => 'micro',
@@ -283,7 +294,7 @@ In order to test the configuration, you must find the public address of the VM w
 			    }',
 			  :firewall => "['default','standard']",
 			  :storage => "[{ 'DeviceName' => '/dev/xvdb', 'Ebs.VolumeSize' => 100 }]",
-			  :config_steps => proc {|config_param,box_param| " 
+			  :config_steps => proc {|config_param,box_param| "
 			public_ipv4=`curl -s ip.alt.io`
 
 			cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -360,14 +371,14 @@ AWS
 	    :keypair_name => 'dicey1',
 	    :private_key => 'cert/dicey1.pem',
 	  },
-  
+
 Azure  
 
 	  'azure' => {
 	    :mgmt_certificate => 'cert/azure.pem',
 	    :mgmt_endpoint => 'https://management.core.windows.net',
 	    :subscription_id => 'dbeb65dd-1dea-4528-ae5d-b1082da2f799',
-	    :storage_acct_name => 'portalvgds6qmhy1bc0fqn8',   
+	    :storage_acct_name => 'portalvgds6qmhy1bc0fqn8',
 	    :storage_acct_name_prefix => 'dbeb65dd',
 	    :private_key => 'cert/azure.pem',
 	    :public_cert => 'cert/azure.cer',
@@ -390,7 +401,7 @@ Google (GCE)
 	    :google_key_location => 'cert/My First Project-fffcc674adc0.p12',
 	    :private_key => "cert/google_compute_engine",
 	  },
-	  
+
 Rackspace  
 
 	  'rackspace' => {
@@ -399,7 +410,7 @@ Rackspace
 	    :keypair_name => 'id_rsa',
 	    :private_key => 'cert/id_rsa',
 	  },
-  
+
 
 <br><br>
 <hr>
@@ -464,19 +475,19 @@ The boxes_config.rb file specifies at a minimum the names of the machines.  Ther
 
 	{
 	  :boxes => [
-	    { 
+	    {
 	      :hostname  =>  'google-coreos01',
 	      :common_location_name => 'us_central',
 	      :common_instance_type => 'micro',
 	      :common_image_name => 'CoreOS-stable',
 	    },
-	    { 
+	    {
 	      :hostname  =>  'google-coreos02',
 	      :common_location_name => 'europe_west',
 	      :common_instance_type => 'medium',
 	      :common_image_name => 'CoreOS-beta'
 	    },
-	    { 
+	    {
 	      :hostname  =>  'google-coreos03',
 	      :common_location_name => 'asia_east',
 	      :common_instance_type => 'large',
@@ -503,7 +514,7 @@ Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  T
 	        :commands => {
 	          :pre_install => '',
 	          :install => proc {|config_param|  },
-	          :post_install => proc {|config_param,box_param| " 
+	          :post_install => proc {|config_param,box_param| "
 	public_ipv4=`curl -s ip.alt.io`
 
 	cat <<EOF > /usr/share/oem/cloud-config.yml
@@ -527,7 +538,7 @@ Another interesting part is the ```public_ipv4=`curl -s ip.alt.io``` command.  T
 	EOF
 	        /usr/bin/coreos-cloudinit --from-file /usr/share/oem/cloud-config.yml
 	"
-	        } }        
+	        } }
 	      },
 	    },
 
@@ -652,7 +663,7 @@ This corresponds to generic names such as ```CoreOS-444.5.0-(stable)``` and refe
 	      },
 	    },
 	  },
-	    
+
 <A name="images_config">Images Config</a>
 --------------
 Here we specify the image name at the provider followed by which ssh username must be used for that image.  In the case of the CentOS image, the name on the certificate supplied is used.  But in the case of CoreOS the default ```core``` username is used.
@@ -701,7 +712,7 @@ VagrantSpicedir/
 </pre>
 
 <br>
-	  
+
 
 <A name="abstracted_vagrantfile">Abstracted Vagrantfile</a>
 ----------------------
@@ -722,8 +733,8 @@ For those interested, here is what is left of a Vagrantfile in a provider direct
 
 	working_directory = Dir.getwd
 
-	config_files.each {|file| 
-	  file_path = "#{working_directory}/#{file}" 
+	config_files.each {|file|
+	  file_path = "#{working_directory}/#{file}"
 	  contents = File.read(file_path)
 	  var_name = file.split('/')[-1].split('.')[0]
 	  eval("$#{var_name} = #{contents}")
