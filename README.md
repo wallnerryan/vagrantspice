@@ -6,14 +6,11 @@ The primary example in the current version is getting a CoreOS Fleet cluster up 
 
 If you take a peak at the VagrantSpicedir and the provider/consumer config files you can see pretty quickly where we are defining in a structured and consistent way what is typically defined loosely through the Vagrant DSL.
 
-# This branch includes Docker and REX-Ray support for AWS
+# This branch includes Docker , ScaleIO and Flocker Docker Plugin support for AWS
 
-1) Configure VagrantSpice
-2) vagrant up --no-parallel
-3) vagrant ssh mdm1
-4) service rexray restart
-4) rexray get-instance
-5) docker run -ti --volume-driver=rexray -v testing:/testing busybox
+- Configure VagrantSpice
+- vagrant up --no-parallel
+- vagrant ssh mdm1
 
 
 
