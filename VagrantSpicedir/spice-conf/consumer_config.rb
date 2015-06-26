@@ -13,10 +13,10 @@
     :storage_account => '',
   },
   'aws' => {
-    :access_key_id => 'AK',
-    :secret_access_key => 'jSv',
-    :keypair_name => 'id_rsa',
-    :private_key => 'cert/id_rsa.pem',
+    :access_key_id => 'AKIAJDHVD44EU54P7K4Q',
+    :secret_access_key => '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',
+    :keypair_name => 'flocker-sio',
+    :private_key => 'cert/flocker-sio.pem',
   },
   'aws_s3' => {
     :access_key_id => '',

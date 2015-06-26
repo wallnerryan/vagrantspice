@@ -1617,7 +1617,7 @@ EOF
     ",
     :box => 'dummy',
     :defaults => {
-      :common_location_name => 'us_west',
+      :common_location_name => 'us_west_2a',
       :common_image_name => 'CentOS-6.5-x64',
       :common_instance_type => 'small',
       :firewall => "['default']",
@@ -1727,12 +1727,12 @@ EOF
       },
 
 
-      'ami-6bcfc42e' => {
+      'ami-c7d092f7' => {
         :ssh_username => 'centos',
         :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
       },
 
-      'ami-96a818fe' => {
+      'ami-c7d092f7' => {
         :ssh_username => 'centos',
         :user_data =>  "'#!/bin/bash\nsed -i -e \"s/^Defaults.*requiretty/# Defaults requiretty/g\" /etc/sudoers'",
       },
@@ -1851,7 +1851,7 @@ EOF
     },
     :images_lookup => {
       'us_west' => {
-        'CentOS-7-x64' => 'ami-6bcfc42e',
+        'CentOS-7-x64' => 'ami-c7d092f7',
         'CentOS-6.5-x64' => 'ami-454b5e00',
         'CoreOS-stable' => 'ami-17fae852',
         'CoreOS-beta' => 'ami-019d8044',
@@ -2247,8 +2247,8 @@ EOF
     },
     :location_lookup => {
       'us_west' => "
-        aws.region = 'us-west-1'
-        aws.availability_zone = 'us-west-1b'
+        aws.region = 'us-west-2'
+        aws.availability_zone = 'us-west-2a'
       ",
       'us_east' => "
         aws.region = 'us-east-1'

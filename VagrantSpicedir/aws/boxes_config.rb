@@ -34,5 +34,5 @@
     },
   ],
   :boxes_type => 'puppetagent',
-  :firewall => "['default','standard']",
+  :firewall => "['default', 'CentOS 7 -x86_64- with Updates HVM-7 2014-09-29-AutogenByAWSMP-']",
 }
